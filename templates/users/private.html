@@ -1,0 +1,607 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <style>
+    /* Navbar positioning */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      width: 100%;
+    }
+
+    /* Adjust body for fixed navbar */
+    body {
+      padding-top: 70px;
+    }
+
+    /* Apply background directly to main element */
+    main {
+      background: linear-gradient(
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.7)
+      ), url('/themes/cyberai/static/img/userprivate.png') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      min-height: calc(100vh - 150px) !important;
+      position: relative;
+    }
+
+    /* Page Title Section */
+    .user-title {
+      padding: 80px 0 40px 0;
+      text-align: center;
+    }
+
+    .user-title h1 {
+      color: var(--neon-red);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-shadow: 
+        0 0 20px var(--glow-red),
+        0 0 40px var(--glow-red),
+        0 0 60px var(--glow-red);
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      animation: titleGlow 2s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 20px var(--glow-red),
+          0 0 40px var(--glow-red),
+          0 0 60px var(--glow-red);
+      }
+      50% {
+        text-shadow: 
+          0 0 30px var(--glow-red),
+          0 0 60px var(--glow-red),
+          0 0 90px var(--glow-red);
+      }
+    }
+
+    /* User Info Section */
+    .user-info {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .user-info h2 {
+      color: var(--neon-green);
+      font-weight: 700;
+      font-size: 2.5rem;
+      text-shadow: 0 0 20px var(--glow-green);
+      letter-spacing: 3px;
+      margin: 15px 0;
+    }
+
+    .user-info h2 small {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 15px var(--glow-gold);
+      font-size: 0.5em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .user-info h3 {
+      display: inline-block;
+      margin: 10px 5px;
+    }
+
+    .user-info-divider {
+      width: 300px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--christmas-gold), transparent);
+      margin: 30px auto;
+      box-shadow: 0 0 15px var(--glow-gold);
+    }
+
+    /* Team Badge Link */
+    .user-info h2 a {
+      text-decoration: none;
+    }
+
+    .user-info h2 .badge {
+      transition: all 0.3s ease;
+    }
+
+    .user-info h2 a:hover .badge {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px var(--glow-gold), 0 0 60px var(--glow-gold);
+    }
+
+    /* Badge Styling */
+    .badge.bg-primary,
+    .badge.rounded-pill {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(0, 255, 0, 0.3)) !important;
+      border: 2px solid var(--christmas-gold);
+      color: var(--christmas-gold) !important;
+      font-weight: 700;
+      padding: 8px 16px;
+      text-shadow: 0 0 10px var(--glow-gold);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+      letter-spacing: 1px;
+    }
+
+    .badge.text-bg-light {
+      background: rgba(255, 215, 0, 0.2) !important;
+      border: 2px solid var(--christmas-gold);
+      color: var(--christmas-gold) !important;
+      font-weight: 700;
+      padding: 10px 20px;
+      text-shadow: 0 0 10px var(--glow-gold);
+      box-shadow: 0 0 20px var(--glow-gold);
+    }
+
+    .badge.bg-secondary {
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 200, 200, 0.3)) !important;
+      border: 2px solid #00ffff;
+      color: #00ffff !important;
+      font-weight: 700;
+      padding: 8px 16px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+      font-size: 1.2rem;
+    }
+
+    /* Field Info */
+    .field-info {
+      color: var(--christmas-white);
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      margin: 10px 0;
+    }
+
+    /* External Link Icon */
+    .user-info a i {
+      color: var(--christmas-gold);
+      transition: all 0.3s ease;
+      text-shadow: 0 0 10px var(--glow-gold);
+    }
+
+    .user-info a:hover i {
+      color: var(--neon-green);
+      text-shadow: 0 0 20px var(--glow-green);
+      transform: scale(1.2);
+    }
+
+    /* Section Headers */
+    .container h3 {
+      color: var(--neon-green);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px var(--glow-green);
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border-left: 5px solid var(--neon-green);
+      border-radius: 5px;
+      box-shadow: 0 0 20px var(--glow-green);
+      margin-bottom: 25px;
+    }
+
+    .container h3::before {
+      content: '🎄 ';
+      filter: drop-shadow(0 0 10px var(--glow-green));
+    }
+
+    /* Table Styling */
+    .table {
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid var(--christmas-gold);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 30px var(--glow-gold);
+      color: var(--christmas-white);
+    }
+
+    .table thead {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(0, 255, 0, 0.3));
+      border-bottom: 3px solid var(--christmas-gold);
+    }
+
+    .table thead th {
+      color: var(--christmas-gold);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 18px 15px;
+      text-shadow: 0 0 15px var(--glow-gold);
+      border: none;
+    }
+
+    .table tbody tr {
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+      background: rgba(0, 255, 0, 0.15);
+      box-shadow: inset 0 0 30px var(--glow-green);
+      transform: scale(1.01);
+    }
+
+    .table tbody td {
+      color: var(--christmas-white);
+      font-size: 1rem;
+      padding: 15px;
+      border: none;
+      vertical-align: middle;
+    }
+
+    .table tbody td a {
+      color: var(--neon-green);
+      text-decoration: none;
+      font-weight: 700;
+      text-shadow: 0 0 10px var(--glow-green);
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .table tbody td a:hover {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 15px var(--glow-gold);
+      text-decoration: underline;
+    }
+
+    /* Progress Bars */
+    .progress {
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      height: 30px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-bar {
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      transition: all 0.3s ease;
+    }
+
+    /* Progress Legend */
+    .progress + div small,
+    .progress + template + div small {
+      color: var(--christmas-white);
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      letter-spacing: 1px;
+    }
+
+    /* Awards Section */
+    .text-center p {
+      color: var(--christmas-white);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    }
+
+    .text-center strong {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 10px var(--glow-gold);
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+
+    .award-icon {
+      color: var(--neon-green);
+      filter: drop-shadow(0 0 15px var(--glow-green));
+      transition: all 0.3s ease;
+    }
+
+    .award-icon:hover {
+      color: var(--christmas-gold);
+      filter: drop-shadow(0 0 20px var(--glow-gold));
+      transform: scale(1.2);
+    }
+
+    /* Score Graph Container */
+    #score-graph {
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid var(--christmas-gold);
+      border-radius: 10px;
+      padding: 40px;
+      margin-top: 30px;
+      box-shadow: 0 0 30px var(--glow-gold);
+      min-height: 400px;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      color: var(--christmas-gold);
+      filter: drop-shadow(0 0 20px var(--glow-gold));
+    }
+
+    /* No Solves Message */
+    .opacity-50 {
+      color: var(--christmas-gold) !important;
+      font-size: 1.8rem;
+      text-shadow: 0 0 20px var(--glow-gold);
+      letter-spacing: 3px;
+      opacity: 0.7 !important;
+    }
+
+    /* Time Display */
+    .solve-time {
+      font-family: 'Courier New', monospace;
+      color: var(--neon-green);
+      text-shadow: 0 0 8px var(--glow-green);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .user-title {
+        padding: 40px 0 20px 0;
+      }
+
+      .user-title h1 {
+        font-size: 2rem;
+        letter-spacing: 4px;
+      }
+
+      .user-info h2 {
+        font-size: 1.8rem;
+      }
+
+      .container h3 {
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+        padding: 12px 15px;
+      }
+
+      .table thead th {
+        font-size: 0.85rem;
+        padding: 12px 10px;
+        letter-spacing: 1px;
+      }
+
+      .table tbody td {
+        font-size: 0.9rem;
+        padding: 12px 10px;
+      }
+
+      .badge {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+      }
+
+      .badge.bg-secondary {
+        font-size: 1rem;
+      }
+
+      #score-graph {
+        padding: 20px;
+        min-height: 300px;
+      }
+
+      .user-info-divider {
+        width: 200px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <!-- User Title -->
+    <div class="user-title">
+      <h1>{{ user.name }}</h1>
+    </div>
+
+    <!-- User Info -->
+    <div class="user-info">
+      {% if user.team_id %}
+        <h2>
+          <a href="{{ url_for('teams.public', team_id=user.team_id) }}">
+            <span class="badge bg-secondary">
+              {{ user.team.name }}
+            </span>
+          </a>
+        </h2>
+      {% endif %}
+
+      <div class="pt-2">
+        {% if user.oauth_id %}
+          <a href="https://majorleaguecyber.org/u/{{ user.name }}">
+            <h3 class="d-inline-block mx-1"><span class="badge rounded-pill bg-primary">{% trans %}Official{% endtrans %}</span></h3>
+          </a>
+        {% endif %}
+
+        {% if user.affiliation %}
+          <h3 class="d-inline-block mx-1">
+            <span class="badge rounded-pill bg-primary">{{ user.affiliation }}</span>
+          </h3>
+        {% endif %}
+
+        {% if user.country %}
+          <h3 class="d-inline-block mx-1">
+            <span class="badge rounded-pill bg-primary">
+                <i class="flag-{{ user.country.lower() }}"></i>
+                {{ lookup_country_code(user.country) }}
+            </span>
+          </h3>
+        {% endif %}
+      </div>
+
+      {% if user.bracket_id %}
+        <div class="pt-2">
+          <h2>
+            <span class="badge text-bg-light">
+              {{ user.bracket.name }}
+            </span>
+          </h2>
+        </div>
+      {% endif %}
+
+      <div class="pt-2">
+        {% for field in user.fields %}
+          <div class="field-info">
+            {{ field.name }}: {{ field.value }}
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if user.fields %}
+        <div class="user-info-divider"></div>
+      {% endif %}
+
+      <div>
+        <h2 class="text-center">
+          {% if account.place %}
+            {{ account.place }} <small>place</small>
+          {% endif %}
+        </h2>
+        <h2 class="text-center">
+          {% if account %}
+            {{ account.get_score(admin=True) }} <small>points</small>
+          {% endif %}
+        </h2>
+      </div>
+
+      <div class="pt-3">
+        {% if user.website %}
+          <a href="{{ user.website }}" target="_blank" style="color: inherit;" rel="noopener">
+            <i
+                class="fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+                title="{{ user.website }}"
+            ></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% include "components/errors.html" %}
+
+    {% set solves = user.solves %}
+    {% set awards = user.awards %}
+
+    {% if solves or awards %}
+      {% if awards %}
+        <div class="row">
+          <div class="col-md-12">
+            <h3>{% trans %}Awards{% endtrans %}</h3>
+          </div>
+          {% for award in awards %}
+            <div class="col-md-3 col-sm-6">
+              <p class="text-center">
+                <i class="award-icon award-{{ award.icon }} fa-2x"></i>
+                <br>
+                <strong>{{ award.name }}</strong>
+              </p>
+              <p class="text-center">{{ award.category or "" }}</p>
+              <p class="text-center">{{ award.description or "" }}</p>
+              <p class="text-center">{{ award.value }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <br>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h3>{% trans %}Solves{% endtrans %}</h3>
+          <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+              <th>{% trans %}Challenge{% endtrans %}</th>
+              <th class="d-none d-md-block d-lg-block">{% trans %}Category{% endtrans %}</th>
+              <th>{% trans %}Value{% endtrans %}</th>
+              <th>{% trans %}Time{% endtrans %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for solve in solves %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+                    {{ solve.challenge.name }}
+                  </a>
+                </td>
+                <td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
+                <td>{{ solve.challenge.value }}</td>
+                <td class="solve-time">
+                  <span data-time="{{ solve.date | isoformat }}"></span>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="clearfix"></div>
+
+      <div class="row" x-data="UserGraphs">
+        <div class="col-md-6 d-none d-md-block d-lg-block py-4">
+          <div class="progress">
+            <div 
+              class="progress-bar" 
+              role="progressbar" 
+              :style="{ width: `${getSolvePercentage()}%`, 'background-color': 'rgb(0, 209, 64)' }" 
+            >
+            </div>
+            <div 
+              class="progress-bar" 
+              role="progressbar" 
+              :style="{ width: `${getFailPercentage()}%`, 'background-color': 'rgb(207, 38, 0)' }"
+            >
+            </div>
+          </div>
+          <div class="ps-2 float-start">
+            <svg height="16" width="16">
+              <circle cx="8" cy="8" r="5" fill="rgb(0, 209, 64)" />
+            </svg>
+            <small x-text="`Solves (${getSolvePercentage()}%)`"></small>
+          </div>
+          <div class="ps-2 float-start">
+            <svg height="16" width="16">
+              <circle cx="8" cy="8" r="5" fill="rgb(207, 38, 0)" />
+            </svg>
+            <small x-text="`Fails (${getFailPercentage()}%)`"></small>
+          </div>
+        </div>
+        <div class="col-md-6 d-none d-md-block d-lg-block py-4">
+          <div class="progress">
+            <template x-for="category in getCategoryBreakdown()" :key="category.name">
+              <div 
+                class="progress-bar" 
+                role="progressbar" 
+                :style="{ width: `${category.percent}%`, 'background-color': category.color }"
+              >
+              </div>
+            </template>
+          </div>
+          <template x-for="category in getCategoryBreakdown()" :key="category.name">
+            <div class="ps-2 float-start">
+              <svg height="16" width="16">
+                <circle cx="8" cy="8" r="5" :fill="category.color" />
+              </svg>
+              <small x-text="`${category.name} (${category.percent}%)`"></small>
+            </div>
+          </template>
+        </div>
+        <br class="clearfix">
+        <div class="col-md-12 d-none d-md-block d-lg-block py-4">
+          <div id="score-graph" x-ref="scoregraph" class="w-100 d-flex align-items-center">
+            <div class="text-center w-100">
+              <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="row min-vh-25">
+        <h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
+          {% trans %}No solves yet{% endtrans %}
+        </h3>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/users/private.js") }}
+{% endblock %}

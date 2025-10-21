@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    /* Navbar positioning */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      width: 100%;
+    }
+
+    /* Adjust body for fixed navbar */
+    body {
+      padding-top: 70px;
+    }
+
+    /* Apply background directly to main element */
+    main {
+      background: linear-gradient(
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.8)
+      ), url('/themes/cyberai/static/img/error.png') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      min-height: calc(100vh - 150px) !important;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Error Container */
+    .error-container {
+      text-align: center;
+      padding: 40px 50px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 4px solid var(--neon-red);
+      border-radius: 20px;
+      box-shadow: 0 0 60px var(--glow-red), 0 0 120px var(--glow-red);
+      max-width: 600px;
+      margin: 50px auto;
+      animation: errorPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes errorPulse {
+      0%, 100% {
+        box-shadow: 0 0 60px var(--glow-red), 0 0 120px var(--glow-red);
+        border-color: var(--neon-red);
+      }
+      50% {
+        box-shadow: 0 0 80px var(--glow-red), 0 0 160px var(--glow-red);
+        border-color: #ff3333;
+      }
+    }
+
+    /* 404 Code */
+    .error-code {
+      color: var(--neon-red);
+      font-weight: 900;
+      font-size: 6rem;
+      text-shadow: 
+        0 0 30px var(--glow-red),
+        0 0 60px var(--glow-red),
+        0 0 90px var(--glow-red);
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      letter-spacing: 10px;
+      margin-bottom: 20px;
+      animation: glitchText 4s ease-in-out infinite;
+      line-height: 1;
+    }
+
+    @keyframes glitchText {
+      0%, 90%, 100% {
+        text-shadow: 
+          0 0 30px var(--glow-red),
+          0 0 60px var(--glow-red),
+          0 0 90px var(--glow-red);
+      }
+      92%, 94%, 96%, 98% {
+        text-shadow: 
+          0 0 30px var(--glow-red),
+          3px 3px 0 var(--neon-green),
+          -3px -3px 0 var(--christmas-gold);
+      }
+    }
+
+    /* Error Title */
+    .error-title {
+      color: var(--christmas-gold);
+      font-weight: 900;
+      font-size: 1.8rem;
+      text-shadow: 
+        0 0 20px var(--glow-gold),
+        0 0 40px var(--glow-gold);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+    }
+
+    .error-title::before {
+      content: '⚠️ ';
+      filter: drop-shadow(0 0 15px var(--glow-gold));
+    }
+
+    .error-title::after {
+      content: ' ⚠️';
+      filter: drop-shadow(0 0 15px var(--glow-gold));
+    }
+
+    /* Error Message */
+    .error-message {
+      color: var(--christmas-white);
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 25px;
+    }
+
+    /* Divider */
+    .error-divider {
+      width: 250px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-red), var(--christmas-gold), var(--neon-red), transparent);
+      margin: 25px auto;
+      box-shadow: 0 0 20px var(--glow-red);
+      animation: dividerGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes dividerGlow {
+      0%, 100% {
+        box-shadow: 0 0 20px var(--glow-red);
+      }
+      50% {
+        box-shadow: 0 0 30px var(--glow-red), 0 0 60px var(--glow-red);
+      }
+    }
+
+    /* Back Home Button */
+    .btn-home {
+      background: linear-gradient(135deg, var(--neon-green), var(--christmas-green)) !important;
+      border: 2px solid var(--neon-green) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 900;
+      padding: 12px 30px;
+      font-size: 1rem;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 0 0 30px var(--glow-green) !important;
+      transition: all 0.3s ease !important;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-radius: 10px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 15px;
+    }
+
+    .btn-home:hover {
+      background: linear-gradient(135deg, #00ff33, var(--neon-green)) !important;
+      box-shadow: 0 0 40px var(--glow-green), 0 0 80px var(--glow-green) !important;
+      transform: translateY(-3px) scale(1.05) !important;
+      border-color: var(--christmas-gold) !important;
+      color: var(--christmas-white) !important;
+    }
+
+    .btn-home::before {
+      content: '🏠 ';
+      filter: drop-shadow(0 0 10px var(--glow-green));
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .error-container {
+        padding: 35px 25px;
+        margin: 30px 20px;
+      }
+
+      .error-code {
+        font-size: 4rem;
+        letter-spacing: 6px;
+      }
+
+      .error-title {
+        font-size: 1.4rem;
+        letter-spacing: 2px;
+      }
+
+      .error-message {
+        font-size: 1rem;
+        letter-spacing: 1px;
+      }
+
+      .error-divider {
+        width: 200px;
+      }
+
+      .btn-home {
+        padding: 10px 25px;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="error-container">
+          <!-- 404 Code -->
+          <div class="error-code">404</div>
+
+          <!-- Error Title -->
+          <h1 class="error-title">{% trans %}File not found{% endtrans %}</h1>
+
+          <!-- Divider -->
+          <div class="error-divider"></div>
+
+          <!-- Error Message -->
+          <h2 class="error-message">{% trans %}404 Not Found{% endtrans %}</h2>
+
+          <!-- Back Home Button -->
+          <a href="/challenges" class="btn-home">
+            Return Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

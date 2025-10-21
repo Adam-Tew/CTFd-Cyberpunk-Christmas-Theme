@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    /* Navbar positioning */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      width: 100%;
+    }
+
+    /* Adjust body for fixed navbar */
+    body {
+      padding-top: 70px;
+    }
+
+    /* Apply background directly to main element */
+    main {
+      background: linear-gradient(
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.7)
+      ), url('/themes/cyberai/static/img/register.png') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      min-height: calc(100vh - 150px) !important;
+      position: relative;
+    }
+
+    /* Page Title Section */
+    .register-title {
+      padding: 80px 0 40px 0;
+      text-align: center;
+    }
+
+    .register-title h1 {
+      color: var(--neon-red);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-shadow: 
+        0 0 20px var(--glow-red),
+        0 0 40px var(--glow-red),
+        0 0 60px var(--glow-red);
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      animation: titleGlow 2s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+
+    .register-title h1::before {
+      content: '🎄 ';
+      filter: drop-shadow(0 0 15px var(--glow-green));
+    }
+
+    .register-title h1::after {
+      content: ' 🎄';
+      filter: drop-shadow(0 0 15px var(--glow-green));
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 20px var(--glow-red),
+          0 0 40px var(--glow-red),
+          0 0 60px var(--glow-red);
+      }
+      50% {
+        text-shadow: 
+          0 0 30px var(--glow-red),
+          0 0 60px var(--glow-red),
+          0 0 90px var(--glow-red);
+      }
+    }
+
+    /* Form Container */
+    .register-form-container {
+      background: rgba(0, 0, 0, 0.9);
+      border: 3px solid var(--christmas-gold);
+      border-radius: 15px;
+      padding: 50px 40px;
+      margin-bottom: 50px;
+      box-shadow: 0 0 50px var(--glow-gold);
+      backdrop-filter: blur(15px);
+    }
+
+    /* Form Labels */
+    .register-form-container b,
+    .register-form-container label {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 10px var(--glow-gold);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    /* Form Help Text */
+    .form-text {
+      color: var(--neon-green) !important;
+      text-shadow: 0 0 8px var(--glow-green);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Form Inputs */
+    .form-control {
+      background: rgba(0, 0, 0, 0.8) !important;
+      border: 2px solid var(--neon-green) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 600;
+      padding: 12px 15px;
+      font-size: 1rem;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .form-control:focus {
+      border-color: var(--christmas-gold) !important;
+      box-shadow: 0 0 25px var(--glow-gold) !important;
+      background: rgba(0, 0, 0, 0.95) !important;
+      color: var(--christmas-white) !important;
+    }
+
+    /* Submit Button */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--neon-red), var(--christmas-red)) !important;
+      border: 2px solid var(--neon-red) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 900;
+      padding: 12px 25px;
+      font-size: 1.1rem;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 0 0 25px var(--glow-red) !important;
+      transition: all 0.3s ease !important;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-radius: 8px;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #ff3333, var(--neon-red)) !important;
+      box-shadow: 0 0 35px var(--glow-red), 0 0 70px var(--glow-red) !important;
+      transform: translateY(-3px) scale(1.05) !important;
+      border-color: var(--christmas-gold) !important;
+    }
+
+    /* OAuth Button */
+    .btn-secondary {
+      background: linear-gradient(135deg, rgba(0, 255, 0, 0.3), rgba(0, 200, 0, 0.3)) !important;
+      border: 2px solid var(--neon-green) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 700;
+      padding: 15px 25px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6) !important;
+      box-shadow: 0 0 20px var(--glow-green) !important;
+      transition: all 0.3s ease !important;
+      letter-spacing: 1px;
+      border-radius: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, rgba(0, 255, 0, 0.4), rgba(0, 255, 0, 0.3)) !important;
+      box-shadow: 0 0 30px var(--glow-green), 0 0 60px var(--glow-green) !important;
+      transform: translateY(-2px) !important;
+      border-color: var(--christmas-gold) !important;
+    }
+
+    /* Divider */
+    hr {
+      border: none;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--christmas-gold), transparent);
+      margin: 30px 0;
+      box-shadow: 0 0 15px var(--glow-gold);
+    }
+
+    /* Terms and Privacy Text */
+    .tos-text {
+      color: var(--christmas-white);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .tos-text a {
+      color: var(--neon-green);
+      text-decoration: none;
+      font-weight: 700;
+      text-shadow: 0 0 10px var(--glow-green);
+      transition: all 0.3s ease;
+    }
+
+    .tos-text a:hover {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 15px var(--glow-gold);
+      text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .register-title {
+        padding: 40px 0 20px 0;
+      }
+
+      .register-title h1 {
+        font-size: 2rem;
+        letter-spacing: 4px;
+      }
+
+      .register-form-container {
+        padding: 35px 25px;
+      }
+
+      .register-form-container b,
+      .register-form-container label {
+        font-size: 1rem;
+      }
+
+      .form-control {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+      }
+
+      .btn-primary {
+        padding: 10px 20px;
+        font-size: 1rem;
+      }
+
+      .btn-secondary {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <!-- Page Title -->
+    <div class="register-title">
+      <h1>{% trans %}REGISTER{% endtrans %}</h1>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="register-form-container">
+          {% include "components/errors.html" %}
+          
+          {% if integrations.mlc() %}
+            <a class="btn btn-secondary btn-lg btn-block w-100" href="{{ url_for('auth.oauth_login') }}">
+              Login with Major League Cyber
+            </a>
+            <hr>
+          {% endif %}
+
+          {% with form = Forms.auth.RegistrationForm() %}
+            {% from "macros/forms.html" import render_extra_fields %}
+            <form method="post" accept-charset="utf-8" role="form">
+              <div class="mb-3">
+                <b>{{ form.name.label(class="form-label") }}</b>
+                {{ form.name(class="form-control", value=name, autocomplete="username") }}
+                <small class="form-text text-muted">
+                  {% trans %}Your username on the site{% endtrans %}
+                </small>
+              </div>
+
+              <div class="mb-3">
+                <b>{{ form.email.label(class="form-label") }}</b>
+                {{ form.email(class="form-control", value=email, autocomplete="email") }}
+                <small class="form-text text-muted">
+                  {% trans %}Never shown to the public{% endtrans %}
+                </small>
+              </div>
+
+              <div class="mb-3">
+                <b>{{ form.password.label(class="form-label") }}</b>
+                {{ form.password(class="form-control", value=password, autocomplete="new-password") }}
+                <small class="form-text text-muted">
+                  {% trans %}Password used to log into your account{% endtrans %}
+                </small>
+              </div>
+
+              {{ form.nonce() }}
+              {{ render_extra_fields(form.extra) }}
+
+              <div class="row pt-3">
+                <div class="col-6 col-md-4 offset-6 offset-md-8">
+                  {{ form.submit(class="btn btn-block btn-primary w-100") }}
+                </div>
+              </div>
+
+              {% if Configs.tos_or_privacy %}
+                <div class="row pt-3">
+                  <div class="col-md-12 text-center">
+                    <small class="tos-text text-center">
+                      {% trans trimmed privacy_link=Configs.privacy_link, tos_link=Configs.tos_link %}
+                      By registering, you agree to the
+                      <a href="{{ privacy_link }}" target="_blank">privacy policy</a>
+                      and <a href="{{ tos_link }}" target="_blank">terms of service</a>
+                      {% endtrans %}
+                    </small>
+                  </div>
+                </div>
+              {% endif %}
+            </form>
+          {% endwith %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

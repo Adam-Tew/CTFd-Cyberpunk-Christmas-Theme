@@ -1,0 +1,1016 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <style>
+    /* Navbar positioning */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      width: 100%;
+    }
+
+    /* Adjust body for fixed navbar */
+    body {
+      padding-top: 70px;
+    }
+
+    /* Apply background directly to main element */
+    main {
+      background: linear-gradient(
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.7)
+      ), url('/themes/cyberai/static/img/teamprivate.png') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      min-height: calc(100vh - 150px) !important;
+      position: relative;
+    }
+
+    /* Page Title Section */
+    .team-title {
+      padding: 80px 0 40px 0;
+      text-align: center;
+    }
+
+    .team-title h1 {
+      color: var(--neon-red);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-shadow: 
+        0 0 20px var(--glow-red),
+        0 0 40px var(--glow-red),
+        0 0 60px var(--glow-red);
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      animation: titleGlow 2s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 20px var(--glow-red),
+          0 0 40px var(--glow-red),
+          0 0 60px var(--glow-red);
+      }
+      50% {
+        text-shadow: 
+          0 0 30px var(--glow-red),
+          0 0 60px var(--glow-red),
+          0 0 90px var(--glow-red);
+      }
+    }
+
+    /* Team Info Section */
+    .team-info {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .team-info h2 {
+      color: var(--neon-green);
+      font-weight: 700;
+      font-size: 2.5rem;
+      text-shadow: 0 0 20px var(--glow-green);
+      letter-spacing: 3px;
+      margin: 15px 0;
+    }
+
+    .team-info h2 small {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 15px var(--glow-gold);
+      font-size: 0.5em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .team-info h3 {
+      display: inline-block;
+      margin: 10px 5px;
+    }
+
+    .team-info-divider {
+      width: 300px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--christmas-gold), transparent);
+      margin: 30px auto;
+      box-shadow: 0 0 15px var(--glow-gold);
+    }
+
+    /* Action Icons */
+    .team-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .team-actions a {
+      color: var(--christmas-gold);
+      transition: all 0.3s ease;
+      text-shadow: 0 0 10px var(--glow-gold);
+    }
+
+    .team-actions a:hover {
+      color: var(--neon-green);
+      text-shadow: 0 0 20px var(--glow-green);
+      transform: scale(1.2);
+    }
+
+    .team-actions a:nth-child(4):hover {
+      color: var(--neon-red);
+      text-shadow: 0 0 20px var(--glow-red);
+    }
+
+    /* External Link Icon */
+    .team-info a i.fa-external-link-alt {
+      color: var(--christmas-gold);
+      transition: all 0.3s ease;
+      text-shadow: 0 0 10px var(--glow-gold);
+    }
+
+    .team-info a:hover i.fa-external-link-alt {
+      color: var(--neon-green);
+      text-shadow: 0 0 20px var(--glow-green);
+      transform: scale(1.2);
+    }
+
+    /* Badge Styling */
+    .badge.bg-primary {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(0, 255, 0, 0.3)) !important;
+      border: 2px solid var(--christmas-gold);
+      color: var(--christmas-gold) !important;
+      font-weight: 700;
+      padding: 8px 16px;
+      text-shadow: 0 0 10px var(--glow-gold);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+      letter-spacing: 1px;
+    }
+
+    .badge.text-bg-light {
+      background: rgba(255, 215, 0, 0.2) !important;
+      border: 2px solid var(--christmas-gold);
+      color: var(--christmas-gold) !important;
+      font-weight: 700;
+      padding: 10px 20px;
+      text-shadow: 0 0 10px var(--glow-gold);
+      box-shadow: 0 0 20px var(--glow-gold);
+    }
+
+    .badge.bg-secondary {
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 200, 200, 0.3)) !important;
+      border: 2px solid #00ffff;
+      color: #00ffff !important;
+      font-weight: 700;
+      padding: 5px 12px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    }
+
+    /* Field Info */
+    .field-info {
+      color: var(--christmas-white);
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      margin: 10px 0;
+    }
+
+    /* Section Headers */
+    .container h3 {
+      color: var(--neon-green);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px var(--glow-green);
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border-left: 5px solid var(--neon-green);
+      border-radius: 5px;
+      box-shadow: 0 0 20px var(--glow-green);
+      margin-bottom: 25px;
+    }
+
+    .container h3::before {
+      content: '🎄 ';
+      filter: drop-shadow(0 0 10px var(--glow-green));
+    }
+
+    /* Table Styling */
+    .table {
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid var(--christmas-gold);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 30px var(--glow-gold);
+      color: var(--christmas-white);
+    }
+
+    .table thead {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(0, 255, 0, 0.3));
+      border-bottom: 3px solid var(--christmas-gold);
+    }
+
+    .table thead th {
+      color: var(--christmas-gold);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 18px 15px;
+      text-shadow: 0 0 15px var(--glow-gold);
+      border: none;
+    }
+
+    .table tbody tr {
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+      background: rgba(0, 255, 0, 0.15);
+      box-shadow: inset 0 0 30px var(--glow-green);
+      transform: scale(1.01);
+    }
+
+    .table tbody td {
+      color: var(--christmas-white);
+      font-size: 1rem;
+      padding: 15px;
+      border: none;
+      vertical-align: middle;
+    }
+
+    .table tbody td a {
+      color: var(--neon-green);
+      text-decoration: none;
+      font-weight: 700;
+      text-shadow: 0 0 10px var(--glow-green);
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .table tbody td a:hover {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 15px var(--glow-gold);
+      text-decoration: underline;
+    }
+
+    /* Progress Bars */
+    .progress {
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 8px;
+      height: 30px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-bar {
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      transition: all 0.3s ease;
+    }
+
+    /* Progress Legend */
+    .progress + div small,
+    .progress + template + div small {
+      color: var(--christmas-white);
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      letter-spacing: 1px;
+    }
+
+    /* Awards Section */
+    .text-center p {
+      color: var(--christmas-white);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    }
+
+    .text-center strong {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 10px var(--glow-gold);
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+
+    .award-icon {
+      color: var(--neon-green);
+      filter: drop-shadow(0 0 15px var(--glow-green));
+      transition: all 0.3s ease;
+    }
+
+    .award-icon:hover {
+      color: var(--christmas-gold);
+      filter: drop-shadow(0 0 20px var(--glow-gold));
+      transform: scale(1.2);
+    }
+
+    /* Score Graph Container */
+    #score-graph {
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid var(--christmas-gold);
+      border-radius: 10px;
+      padding: 40px;
+      margin-top: 30px;
+      box-shadow: 0 0 30px var(--glow-gold);
+      min-height: 400px;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      color: var(--christmas-gold);
+      filter: drop-shadow(0 0 20px var(--glow-gold));
+    }
+
+    /* No Solves Message */
+    .opacity-50 {
+      color: var(--christmas-gold) !important;
+      font-size: 1.8rem;
+      text-shadow: 0 0 20px var(--glow-gold);
+      letter-spacing: 3px;
+      opacity: 0.7 !important;
+    }
+
+    /* Time Display */
+    .solve-time {
+      font-family: 'Courier New', monospace;
+      color: var(--neon-green);
+      text-shadow: 0 0 8px var(--glow-green);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+      background: linear-gradient(135deg, rgba(10, 10, 10, 0.98), rgba(26, 5, 5, 0.98)) !important;
+      border: 3px solid var(--christmas-gold) !important;
+      box-shadow: 0 0 50px var(--glow-gold) !important;
+      color: var(--christmas-white) !important;
+    }
+
+    .modal-header {
+      border-bottom: 2px solid var(--neon-red) !important;
+      background: rgba(255, 0, 0, 0.1);
+    }
+
+    .modal-header h2 {
+      color: var(--neon-red);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px var(--glow-red);
+    }
+
+    .modal-footer {
+      border-top: 2px solid var(--neon-green) !important;
+      background: rgba(0, 255, 0, 0.05);
+    }
+
+    .modal-body {
+      color: var(--christmas-white);
+    }
+
+    .modal-body b,
+    .modal-body label {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 10px var(--glow-gold);
+      font-weight: 700;
+    }
+
+    .modal-body .form-text {
+      color: var(--neon-green);
+      text-shadow: 0 0 8px var(--glow-green);
+    }
+
+    .modal .form-control,
+    .modal .form-select {
+      background: rgba(0, 0, 0, 0.8) !important;
+      border: 2px solid var(--neon-green) !important;
+      color: var(--christmas-white) !important;
+      padding: 10px;
+    }
+
+    .modal .form-control:focus,
+    .modal .form-select:focus {
+      border-color: var(--christmas-gold) !important;
+      box-shadow: 0 0 20px var(--glow-gold) !important;
+    }
+
+    .modal .btn-primary {
+      background: linear-gradient(135deg, var(--neon-red), var(--christmas-red)) !important;
+      border: 2px solid var(--neon-red) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 700;
+      padding: 10px 25px;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 0 0 20px var(--glow-red) !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .modal .btn-primary:hover {
+      background: linear-gradient(135deg, #ff3333, var(--neon-red)) !important;
+      box-shadow: 0 0 30px var(--glow-red), 0 0 60px var(--glow-red) !important;
+    }
+
+    .modal .btn-danger {
+      background: linear-gradient(135deg, #cc0000, #990000) !important;
+      border: 2px solid var(--neon-red) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 700;
+      box-shadow: 0 0 20px var(--glow-red) !important;
+    }
+
+    .modal .btn-outline-secondary {
+      border: 2px solid var(--neon-green) !important;
+      color: var(--neon-green) !important;
+      background: rgba(0, 255, 0, 0.1);
+    }
+
+    .modal .btn-outline-secondary:hover {
+      background: rgba(0, 255, 0, 0.2) !important;
+      border-color: var(--christmas-gold) !important;
+      color: var(--christmas-gold) !important;
+    }
+
+    /* Alert Styling */
+    .alert-success {
+      background: rgba(0, 255, 0, 0.2) !important;
+      border: 2px solid var(--neon-green) !important;
+      color: var(--neon-green) !important;
+      box-shadow: 0 0 15px var(--glow-green) !important;
+    }
+
+    .alert-danger {
+      background: rgba(255, 0, 0, 0.2) !important;
+      border: 2px solid var(--neon-red) !important;
+      color: var(--neon-red) !important;
+      box-shadow: 0 0 15px var(--glow-red) !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .team-title {
+        padding: 40px 0 20px 0;
+      }
+
+      .team-title h1 {
+        font-size: 2rem;
+        letter-spacing: 4px;
+      }
+
+      .team-info h2 {
+        font-size: 1.8rem;
+      }
+
+      .team-actions {
+        gap: 10px;
+      }
+
+      .team-actions a i {
+        font-size: 1.5rem;
+      }
+
+      .container h3 {
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+        padding: 12px 15px;
+      }
+
+      .table thead th {
+        font-size: 0.85rem;
+        padding: 12px 10px;
+        letter-spacing: 1px;
+      }
+
+      .table tbody td {
+        font-size: 0.9rem;
+        padding: 12px 10px;
+      }
+
+      .badge {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+      }
+
+      #score-graph {
+        padding: 20px;
+        min-height: 300px;
+      }
+
+      .team-info-divider {
+        width: 200px;
+      }
+
+      .modal-header h2 {
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+      }
+    }
+  </style>
+
+  <!-- Modals -->
+  <div id="team-edit-modal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-action text-center w-100">{% trans %}Edit Team{% endtrans %}</h2>
+          <button type="button" class="cursor-pointer btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+
+        <div class="modal-body clearfix" x-data="TeamEditModal">
+          {% with form = Forms.teams.TeamSettingsForm(obj=team) %}
+            {% from "macros/forms.html" import render_extra_fields %}
+            <form id="team-info-form" method="POST" @submit.prevent="updateProfile()">
+
+              <div class="mb-2">
+                <b>{{ form.name.label(class="mb-2") }}</b>
+                {{ form.name(class="form-control") }}
+                <small class="form-text text-muted">
+                  {{ form.name.description }}
+                </small>
+              </div>
+
+              <div class="mb-2">
+                <b>{{ form.password.label(class="mb-2") }}</b>
+                {{ form.password(class="form-control") }}
+                <small class="form-text text-muted">
+                  {{ form.password.description }}
+                </small>
+              </div>
+
+              <div class="mb-2">
+                <b>{{ form.confirm.label(class="mb-2") }}</b>
+                {{ form.confirm(class="form-control") }}
+                <small class="form-text text-muted">
+                  {{ form.confirm.description }}
+                </small>
+              </div>
+
+              <div class="mb-2">
+                <b>{{ form.website.label(class="mb-2") }}</b>
+                {{ form.website(class="form-control") }}
+                <small class="form-text text-muted">
+                  {{ form.website.description }}
+                </small>
+              </div>
+
+              <div class="mb-2">
+                <b>{{ form.affiliation.label(class="mb-2") }}</b>
+                {{ form.affiliation(class="form-control") }}
+                <small class="form-text text-muted">
+                  {{ form.affiliation.description }}
+                </small>
+              </div>
+
+              <div class="mb-2">
+                <b>{{ form.country.label(class="mb-2") }}</b>
+                {{ form.country(class="form-select") }}
+                <small class="form-text text-muted">
+                  {{ form.country.description }}
+                </small>
+              </div>
+
+              <hr>
+
+              {{ render_extra_fields(form.extra) }}
+
+              <div id="results">
+                <div
+                    class="alert alert-success alert-dismissible submit-row"
+                    role="alert" x-cloak="success" x-show="success"
+                >
+                  <strong>Success!</strong>
+                  {% trans %}Your team's profile has been updated{% endtrans %}
+                  <button type="button" class="cursor-pointer btn-close" data-bs-dismiss="alert" aria-label="Close">
+                  </button>
+                </div>
+
+                <template x-for="(msg, idx) in errors" :key="idx">
+                  <div class="alert alert-danger alert-dismissible" role="alert">
+                    <span class="sr-only">{% trans %}Error:{% endtrans %}</span>
+                    <span x-text="msg"></span>
+
+                    <button type="button" class="cursor-pointer btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    </button>
+                  </div>
+                </template>
+              </div>
+
+              {{ form.submit(class="btn btn-primary float-end px-4 modal-action") }}
+            </form>
+          {% endwith %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="team-captain-modal" x-data="TeamCaptainModal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-action text-center w-100">{% trans %}Choose Captain{% endtrans %}</h2>
+          <button type="button" class="cursor-pointer btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body clearfix">
+          {% with form = Forms.teams.TeamCaptainForm(captain_id=team.captain_id) %}
+            <form id="team-captain-form" method="POST" @submit.prevent="updateCaptain()">
+              <div class="mb-3">
+                {{ form.captain_id.label(class="form-label") }}
+                {% for member in team.members %}
+                  {# Append members to the select choices #}
+                  {% set _ = form.captain_id.choices.append((member.id, member.name)) %}
+                {% endfor %}
+                {{ form.captain_id(class="form-select mb-2") }}
+              </div>
+              <div id="results">
+                <div
+                    class="alert alert-success alert-dismissible submit-row"
+                    role="alert"
+                    x-cloak="success"
+                    x-show="success"
+                >
+                  <strong>Success!</strong>
+                  {% trans %}Your captain rights have been transferred{% endtrans %}
+                  <button type="button" class="cursor-pointer btn-close" data-bs-dismiss="alert" aria-label="Close">
+                  </button>
+                </div>
+                <template x-for="(msg, idx) in errors" :key="idx">
+                  <div class="alert alert-danger alert-dismissible" role="alert">
+                    <span class="sr-only">Error:</span>
+                    <span x-text="msg"></span>
+                    <button type="button" class="cursor-pointer btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    </button>
+                  </div>
+                </template>
+              </div>
+              {{ form.submit(class="btn btn-primary float-end px-4 modal-action") }}
+            </form>
+          {% endwith %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="team-invite-modal" x-data="TeamInviteModal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-action text-center w-100">{% trans %}Invite Users{% endtrans %}</h2>
+          <button type="button" class="cursor-pointer btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body clearfix">
+          {% with form = Forms.teams.TeamInviteForm() %}
+            <form method="POST">
+              <div class="mb-3">
+                <b>{{ form.link.label(class="form-label") }}</b>
+
+                <div class="input-group mb-3">
+                  {{ form.link(id="team-invite-link", class="form-control", **{"x-ref": "link", "x-bind:value": "$store.inviteToken"}) }}
+
+                  <button class="btn btn-outline-secondary px-3" type="button" @click="copy()">
+                    <i class="fas fa-clipboard"></i>
+                  </button>
+                </div>
+
+                <small class="form-text text-muted">
+                  {% trans %}Share this link with your team members for them to join your team{% endtrans %}
+                </small>
+                <small class="form-text text-muted">
+                  {% trans %}Invite links can be re-used and expire after 1 day{% endtrans %}
+                </small>
+              </div>
+            </form>
+          {% endwith %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="team-disband-modal" x-data="TeamDisbandModal" class="modal fade">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-action text-center w-100">{% trans %}Disband Team{% endtrans %}</h2>
+          <button type="button" class="cursor-pointer btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0">{% trans %}Are you sure you want to disband your team?{% endtrans %}</p>
+
+          <div class="mt-3">
+            <template x-for="(msg, idx) in errors" :key="idx">
+              <div class="alert alert-danger" role="alert">
+                <span class="sr-only">{% trans %}Error:{% endtrans %}</span>
+                <span x-text="msg"></span>
+              </div>
+            </template>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{% trans %}No{% endtrans %}</button>
+          <button type="button" class="btn btn-primary" @click="disbandTeam()" :disabled="errors.length > 0">{% trans %}Yes{% endtrans %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Team Title -->
+    <div class="team-title">
+      <h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
+    </div>
+
+    <!-- Team Info -->
+    <div class="team-info">
+      {% if team.oauth_id %}
+        <a href="https://majorleaguecyber.org/t/{{ team.name }}">
+          <h3><span class="badge bg-primary">{% trans %}Official{% endtrans %}</span></h3>
+        </a>
+      {% endif %}
+
+      {% if team.affiliation %}
+        <h3 class="d-inline-block">
+          <span class="badge bg-primary">{{ team.affiliation }}</span>
+        </h3>
+      {% endif %}
+
+      {% if team.country %}
+        <h3 class="d-inline-block">
+          <span class="badge bg-primary">
+            <i class="flag-{{ team.country.lower() }}"></i>
+            {{ lookup_country_code(team.country) }}
+          </span>
+        </h3>
+      {% endif %}
+
+      {% if team.bracket_id %}
+        <div class="pt-2">
+          <h2>
+            <span class="badge text-bg-light">
+              {{ team.bracket.name }}
+            </span>
+          </h2>
+        </div>
+      {% endif %}
+
+      <div class="pt-2">
+        {% for field in team.fields %}
+          <div class="field-info">
+            {{ field.name }}: {{ field.value }}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="pt-2">
+        {% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
+          <a href="{{ team.website }}" target="_blank" style="color: inherit;" rel="noopener">
+            <i
+                class="fas fa-external-link-alt fa-2x px-2 pt-2"
+                data-toggle="tooltip" data-placement="top"
+                title="{{ team.website }}"
+            ></i>
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="team-info-divider"></div>
+
+      <h2 id="team-place">
+        {# This intentionally hides the team's place when scores are hidden because this can be their internal profile
+           and we don't want to leak their place in the CTF. #}
+        {# Public page hiding is done at the route level #}
+        {% if scores_visible() %}
+          {% if place %}
+            {{ place }}
+            <small>{% trans %}place{% endtrans %}</small>
+          {% endif %}
+        {% endif %}
+      </h2>
+
+      <h2 id="team-score">
+        {% if score %}
+          {{ score }}
+          <small>{% trans %}points{% endtrans %}</small>
+        {% endif %}
+      </h2>
+
+      <div x-data="CaptainMenu" class="team-actions">
+        <a class="edit-team" @click="editTeam()">
+          <i
+              class="cursor-pointer fas fa-cogs fa-2x"
+              data-bs-toggle="tooltip" data-bs-placement="top"
+              title="Edit Team"
+          ></i>
+        </a>
+        <a class="edit-captain" @click="chooseCaptain()">
+          <i
+              class="cursor-pointer fas fa-user-tag fa-2x"
+              data-bs-toggle="tooltip" data-bs-placement="top"
+              title="Choose Captain"
+          ></i>
+        </a>
+
+        <a class="invite-members" @click="inviteMembers()">
+          <i
+              class="cursor-pointer fas fa-ticket-alt fa-2x"
+              data-bs-toggle="tooltip" data-bs-placement="top"
+              title="Invite Users"
+          ></i>
+        </a>
+        <a class="disband-team" @click="disbandTeam()">
+          <i
+              class="cursor-pointer fas fa-trash-alt fa-2x"
+              data-bs-toggle="tooltip" data-bs-placement="top"
+              title="Disband Team"
+          ></i>
+        </a>
+      </div>
+    </div>
+
+    {% include "components/errors.html" %}
+
+    <br>
+
+    <div class="row min-vh-25">
+      <div class="col-md-12">
+        <h3>{% trans %}Members{% endtrans %}</h3>
+        <table class="table table-striped align-middle">
+          <thead>
+          <tr>
+            <th>{% trans %}User Name{% endtrans %}</th>
+            <th>{% trans %}Score{% endtrans %}</th>
+          </tr>
+          </thead>
+          <tbody>
+
+          {% for member in team.members %}
+            <tr>
+              <td>
+                <a href="{{ url_for('users.public', user_id=member.id) }}">
+                  {{ member.name }}
+                </a>
+                {% if member.bracket_id %}
+                  <span class="badge bg-secondary ms-2">{{ member.bracket.name }}</span>
+                {% endif %}
+                {% if team.captain_id == member.id %}
+                  <span class="badge bg-primary ms-2">{% trans %}Captain{% endtrans %}</span>
+                {% endif %}
+              </td>
+              <td>{{ member.score }}</td>
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if solves or awards %}
+      {% if awards %}
+        <div class="row">
+          <div class="col-md-12">
+            <h3>{% trans %}Awards{% endtrans %}</h3>
+          </div>
+
+          {% for award in awards %}
+            <div class="col-md-3 col-sm-6">
+              <p class="text-center">
+                <i class="award-icon award-{{ award.icon }} fa-2x"></i>
+                <br>
+                <strong>{{ award.name }}</strong>
+              </p>
+              {% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
+              {% if award.description %}<p class="text-center">{{ award.description }}</p>{% endif %}
+              <p class="text-center">{{ award.value }}</p>
+            </div>
+          {% endfor %}
+
+        </div>
+
+        <br>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-12">
+          <h3>{% trans %}Solves{% endtrans %}</h3>
+          <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+              <th>{% trans %}Challenge{% endtrans %}</th>
+              <th class="d-none d-md-block d-lg-block">{% trans %}Category{% endtrans %}</th>
+              <th>{% trans %}Value{% endtrans %}</th>
+              <th>{% trans %}Time{% endtrans %}</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for solve in solves %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+                    {{ solve.challenge.name }}
+                  </a>
+                </td>
+                <td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
+                <td>{{ solve.challenge.value }}</td>
+                <td class="solve-time">
+                  <span data-time="{{ solve.date | isoformat }}">{{ solve.date }}</span>
+                </td>
+              </tr>
+            {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="clearfix"></div>
+
+      <div class="row" x-data="TeamGraphs">
+        <div class="col-md-6 d-none d-md-block d-lg-block py-4">
+          <div class="progress">
+            <div 
+              class="progress-bar" 
+              role="progressbar" 
+              :style="{ width: `${getSolvePercentage()}%`, 'background-color': 'rgb(0, 209, 64)' }" 
+            >
+            </div>
+            <div 
+              class="progress-bar" 
+              role="progressbar" 
+              :style="{ width: `${getFailPercentage()}%`, 'background-color': 'rgb(207, 38, 0)' }"
+            >
+            </div>
+          </div>
+          <div class="ps-2 float-start">
+            <svg height="16" width="16">
+              <circle cx="8" cy="8" r="5" fill="rgb(0, 209, 64)" />
+            </svg>
+            <small x-text="`Solves (${getSolvePercentage()}%)`"></small>
+          </div>
+          <div class="ps-2 float-start">
+            <svg height="16" width="16">
+              <circle cx="8" cy="8" r="5" fill="rgb(207, 38, 0)" />
+            </svg>
+            <small x-text="`Fails (${getFailPercentage()}%)`"></small>
+          </div>
+        </div>
+        <div class="col-md-6 d-none d-md-block d-lg-block py-4">
+          <div class="progress">
+            <template x-for="category in getCategoryBreakdown()" :key="category.name">
+              <div 
+                class="progress-bar" 
+                role="progressbar" 
+                :style="{ width: `${category.percent}%`, 'background-color': category.color }"
+              >
+              </div>
+            </template>
+          </div>
+          <template x-for="category in getCategoryBreakdown()" :key="category.name">
+            <div class="ps-2 float-start">
+              <svg height="16" width="16">
+                <circle cx="8" cy="8" r="5" :fill="category.color" />
+              </svg>
+              <small x-text="`${category.name} (${category.percent}%)`"></small>
+            </div>
+          </template>
+        </div>
+
+        <br class="clearfix">
+
+        <div class="col-md-12 d-none d-md-block d-lg-block">
+          <div id="score-graph" x-ref="scoregraph" class="w-100 d-flex align-items-center">
+            <div class="text-center w-100">
+              <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="row min-vh-25">
+        <h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
+          {% trans %}No solves yet{% endtrans %}
+        </h3>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+      window.stats_data = {{ {
+        'type': 'team',
+        'id': team.id,
+        'name': team.name,
+        'account_id': 'me',
+      } | tojson }};
+
+      window.team_captain = {{ (user.id == team.captain_id) | tojson }};
+  </script>
+  {{ Assets.js("assets/js/teams/private.js") }}
+{% endblock %}
