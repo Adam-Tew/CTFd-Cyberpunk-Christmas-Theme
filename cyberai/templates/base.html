@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ title or Configs.ctf_name }}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="{{ Configs.ctf_small_icon }}" type="image/x-icon">
+  {{ meta | safe }}
+  {% block stylesheets %}
+    {{ Assets.css("assets/scss/main.scss") }}
+  {% endblock %}
+  {{ Plugins.styles }}
+  
+  <!-- FORCE DARK MODE - No theme switcher -->
+  <script type="text/javascript">
+    // Force dark mode immediately before page renders
+    (function() {
+      document.documentElement.setAttribute('data-bs-theme', 'dark');
+      document.documentElement.classList.add('dark-mode');
+      // Store dark mode in localStorage to prevent any switches
+      localStorage.setItem('theme', 'dark');
+      localStorage.setItem('data-bs-theme', 'dark');
+    })();
+  </script>
+  
+  <!-- CHRISTMAS SANTARAI THEME -->
+  <style>
+    :root {
+      --christmas-red: #c41e3a;
+      --christmas-green: #165b33;
+      --christmas-gold: #ffd700;
+      --christmas-white: #ffffff;
+      --neon-red: #ff0000;
+      --neon-green: #00ff00;
+      --cyber-dark: #0d0221;
+      --cyber-darker: #050014;
+      --glow-red: rgba(255, 0, 0, 0.8);
+      --glow-green: rgba(0, 255, 0, 0.8);
+      --glow-gold: rgba(255, 215, 0, 0.8);
+    }
+
+    body {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #050a05 100%) !important;
+      color: var(--christmas-white) !important;
+      font-family: 'Courier New', monospace !important;
+    }
+
+    /* Hide theme toggle button if it exists */
+    .color-mode-toggle,
+    #color-mode-toggle,
+    [data-toggle="color-mode"],
+    .theme-toggle,
+    .theme-switcher {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    /* Snowflakes Animation - Behind everything functional */
+    .snowflakes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none !important;
+      z-index: 1;
+    }
+
+    .snowflake {
+      position: absolute;
+      top: -10%;
+      color: var(--christmas-white);
+      font-size: 1.5rem;
+      opacity: 0.6;
+      animation: fall linear infinite;
+      text-shadow: 0 0 5px var(--christmas-white);
+      pointer-events: none !important;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+
+    /* Christmas Ornaments Decoration - Behind functional content */
+    .christmas-ornaments {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      pointer-events: none !important;
+      z-index: 2;
+    }
+
+    .ornament {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.3;
+      animation: float 6s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px currentColor);
+      pointer-events: none !important;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+    }
+
+    /* Navbar - Christmas Theme */
+    .navbar {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(20, 5, 5, 0.9)) !important;
+      border-bottom: 3px solid var(--neon-red) !important;
+      box-shadow: 
+        0 5px 20px rgba(0, 0, 0, 0.5),
+        0 0 20px var(--glow-red) !important;
+      backdrop-filter: blur(10px);
+    }
+
+    .navbar-brand {
+      color: var(--neon-red) !important;
+      font-weight: 700 !important;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 0 0 15px var(--glow-red) !important;
+    }
+
+    .navbar-brand::before {
+      content: '🎄 ';
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--glow-green);
+      filter: drop-shadow(0 0 5px var(--glow-green));
+    }
+
+    .nav-link {
+      color: var(--neon-green) !important;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: var(--neon-red) !important;
+      text-shadow: 0 0 10px var(--glow-red) !important;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--neon-red), var(--christmas-gold));
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .nav-link:hover::after {
+      width: 80%;
+    }
+
+    /* Cards and Containers - Christmas Theme */
+    .card {
+      background: rgba(0, 0, 0, 0.6) !important;
+      border: 2px solid rgba(255, 215, 0, 0.3) !important;
+      box-shadow: 0 0 20px var(--glow-gold) !important;
+      color: var(--christmas-white) !important;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(0, 255, 0, 0.2)) !important;
+      border-bottom: 2px solid var(--christmas-gold) !important;
+      color: var(--christmas-gold) !important;
+      font-weight: bold !important;
+    }
+
+    /* Tables - Christmas Theme */
+    .table {
+      background: rgba(0, 0, 0, 0.5) !important;
+      color: var(--christmas-white) !important;
+    }
+
+    .table thead th {
+      background: rgba(255, 0, 0, 0.2) !important;
+      border-bottom: 2px solid var(--christmas-gold) !important;
+      color: var(--christmas-gold) !important;
+    }
+
+    .table tbody tr:hover {
+      background: rgba(0, 255, 0, 0.1) !important;
+      box-shadow: inset 0 0 20px var(--glow-green) !important;
+    }
+
+    /* Footer - Christmas Theme */
+    .footer {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(5, 10, 5, 0.9)) !important;
+      border-top: 3px solid var(--neon-green) !important;
+      padding: 1.5rem 0 !important;
+      margin-top: 0 !important;
+      box-shadow: 0 -5px 20px var(--glow-green) !important;
+      text-align: center;
+      min-height: 80px;
+    }
+
+    .footer::before {
+      content: 'サンタライ、クリスマスです // OUTPOST 24 // SANTARAI, IT\'S CHRISTMAS';
+      display: block;
+      color: var(--christmas-gold);
+      font-size: 1rem;
+      letter-spacing: 3px;
+      text-shadow: 
+        0 0 10px var(--glow-gold),
+        0 0 20px var(--neon-red);
+      animation: flicker 2s infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+      20%, 24%, 55% { opacity: 0.4; }
+    }
+
+    .footer a {
+      color: var(--neon-green) !important;
+      transition: all 0.3s ease;
+    }
+
+    .footer a:hover {
+      color: var(--christmas-gold) !important;
+      text-shadow: 0 0 10px var(--glow-gold) !important;
+    }
+
+    /* Alert Styling - Christmas Theme */
+    .alert-success {
+      background: rgba(0, 255, 0, 0.2) !important;
+      border: 2px solid var(--neon-green) !important;
+      color: var(--neon-green) !important;
+      box-shadow: 0 0 15px var(--glow-green) !important;
+    }
+
+    .alert-danger {
+      background: rgba(255, 0, 0, 0.2) !important;
+      border: 2px solid var(--neon-red) !important;
+      color: var(--neon-red) !important;
+      box-shadow: 0 0 15px var(--glow-red) !important;
+    }
+
+    .alert-info {
+      background: rgba(255, 215, 0, 0.2) !important;
+      border: 2px solid var(--christmas-gold) !important;
+      color: var(--christmas-gold) !important;
+      box-shadow: 0 0 15px var(--glow-gold) !important;
+    }
+
+    /* Modal - Christmas Theme */
+    .modal-content {
+      background: linear-gradient(135deg, rgba(10, 10, 10, 0.95), rgba(26, 5, 5, 0.95)) !important;
+      border: 2px solid var(--christmas-gold) !important;
+      box-shadow: 0 0 30px var(--glow-gold) !important;
+      color: var(--christmas-white) !important;
+    }
+
+    .modal-header {
+      border-bottom: 2px solid var(--neon-red) !important;
+    }
+
+    .modal-footer {
+      border-top: 2px solid var(--neon-green) !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .footer::before {
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+      }
+      
+      .ornament {
+        font-size: 1.2rem;
+        opacity: 0.2;
+      }
+      
+      .snowflake {
+        font-size: 1rem;
+        opacity: 0.4;
+      }
+    }
+
+    /* Scrollbar Styling - Christmas Theme */
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.8);
+      border-left: 1px solid var(--christmas-gold);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--neon-red), var(--neon-green));
+      border-radius: 6px;
+      border: 2px solid rgba(0, 0, 0, 0.8);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #ff3333, #00ff33);
+      box-shadow: 0 0 10px var(--glow-gold);
+    }
+  </style>
+  
+  <script type="text/javascript">
+      window.init = {
+          'urlRoot': "{{ request.script_root }}",
+          'csrfNonce': "{{ Session.nonce }}",
+          'userMode': "{{ Configs.user_mode }}",
+          'userId': {{ Session.id }},
+          'userName': {{ User.name | tojson }},
+          'userEmail': {{ User.email | tojson }},
+          'userVerified': {{ User.verified | tojson }},
+          'teamId': {{ Team.id | tojson }},
+          'teamName': {{ Team.name | tojson }},
+          'start': {{ Configs.start | tojson }},
+          'end': {{ Configs.end | tojson }},
+          'themeSettings': {{ Configs.theme_settings | tojson }},
+          'eventSounds': [
+            "/themes/core/static/sounds/notification.webm",
+            "/themes/core/static/sounds/notification.mp3",
+          ],
+      }
+  </script>
+  {{ Configs.theme_header }}
+</head>
+<body>
+  <!-- Snowflakes -->
+  <div class="snowflakes" aria-hidden="true">
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+    <div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+  </div>
+
+  <!-- Christmas Ornaments (randomly positioned) -->
+  <div class="christmas-ornaments" aria-hidden="true" id="ornaments-container">
+    <!-- Christmas themed -->
+    <div class="ornament">🎄</div>
+    <div class="ornament">⛄</div>
+    <div class="ornament">🎁</div>
+    <div class="ornament">🔔</div>
+    <div class="ornament">⭐</div>
+    <div class="ornament">🎅</div>
+    <!-- Ninja/Samurai/Cyber themed -->
+    <div class="ornament">🥷</div>
+    <div class="ornament">🗡️</div>
+    <div class="ornament">🤖</div>
+    <div class="ornament">⚡</div>
+  </div>
+
+  <script>
+    // Force dark mode and prevent theme switching
+    (function() {
+      // Remove any theme switcher buttons that might exist
+      document.addEventListener('DOMContentLoaded', function() {
+        // Hide theme toggle buttons
+        const themeToggles = document.querySelectorAll('.color-mode-toggle, #color-mode-toggle, [data-toggle="color-mode"], .theme-toggle, .theme-switcher');
+        themeToggles.forEach(toggle => {
+          toggle.style.display = 'none';
+          toggle.style.visibility = 'hidden';
+          toggle.remove();
+        });
+        
+        // Ensure dark mode is always set
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+        document.documentElement.classList.add('dark-mode');
+        
+        // Prevent any theme changes
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'data-bs-theme') {
+              if (document.documentElement.getAttribute('data-bs-theme') !== 'dark') {
+                document.documentElement.setAttribute('data-bs-theme', 'dark');
+              }
+            }
+          });
+        });
+        
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-bs-theme', 'class']
+        });
+      });
+      
+      // Override any localStorage changes
+      const originalSetItem = localStorage.setItem;
+      localStorage.setItem = function(key, value) {
+        if (key === 'theme' || key === 'data-bs-theme') {
+          value = 'dark';
+        }
+        originalSetItem.apply(this, arguments);
+      };
+    })();
+    
+    // Randomize positions on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Randomize snowflakes
+      const snowflakes = document.querySelectorAll('.snowflake');
+      snowflakes.forEach((snowflake) => {
+        const randomLeft = Math.random() * 100; // 0-100%
+        const randomDuration = 10 + Math.random() * 10; // 10-20 seconds
+        const randomDelay = Math.random() * 5; // 0-5 seconds
+        const randomSize = 0.8 + Math.random() * 1; // 0.8-1.8rem
+        
+        snowflake.style.left = randomLeft + '%';
+        snowflake.style.animationDuration = randomDuration + 's';
+        snowflake.style.animationDelay = randomDelay + 's';
+        snowflake.style.fontSize = randomSize + 'rem';
+      });
+      
+      // Randomize ornaments
+      const ornaments = document.querySelectorAll('.ornament');
+      const buffer = 80; // Keep away from edges
+      
+      ornaments.forEach((ornament) => {
+        // Random position (avoiding edges)
+        const randomTop = buffer + Math.random() * (window.innerHeight - buffer * 2);
+        const randomLeft = buffer + Math.random() * (window.innerWidth - buffer * 2);
+        
+        // Random animation properties
+        const randomDelay = Math.random() * 6;
+        const randomDuration = 5 + Math.random() * 4; // 5-9 seconds
+        
+        ornament.style.top = randomTop + 'px';
+        ornament.style.left = randomLeft + 'px';
+        ornament.style.animationDelay = randomDelay + 's';
+        ornament.style.animationDuration = randomDuration + 's';
+      });
+      
+      // Re-randomize ornaments on window resize
+      let resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+          ornaments.forEach((ornament) => {
+            const randomTop = buffer + Math.random() * (window.innerHeight - buffer * 2);
+            const randomLeft = buffer + Math.random() * (window.innerWidth - buffer * 2);
+            ornament.style.top = randomTop + 'px';
+            ornament.style.left = randomLeft + 'px';
+          });
+        }, 250);
+      });
+    });
+  </script>
+
+  {% include "components/navbar.html" %}
+  <main role="main">
+    {% block content %}
+    {% endblock %}
+  </main>
+  {% include "components/snackbar.html" %}
+  <footer class="footer">
+    <div class="container text-center">
+      <!-- Footer content handled by CSS ::before -->
+    </div>
+  </footer>
+  {% include "components/notifications.html" %}
+  {% block scripts %}
+    {{ Assets.js("assets/js/page.js") }}
+  {% endblock %}
+  {{ Plugins.scripts }}
+  {{ Configs.theme_footer }}
+</body>
+</html>

@@ -1,0 +1,538 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <style>
+    /* Navbar positioning */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      width: 100%;
+    }
+
+    /* Adjust body for fixed navbar */
+    body {
+      padding-top: 70px;
+    }
+
+    /* Apply background directly to main element */
+    main {
+      background: linear-gradient(
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.7)
+      ), url('/themes/cyberai/static/img/userpublic.png') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      min-height: calc(100vh - 150px) !important;
+      position: relative;
+    }
+
+    /* Page Title Section */
+    .users-title {
+      padding: 80px 0 40px 0;
+      text-align: center;
+    }
+
+    .users-title h1 {
+      color: var(--neon-red);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-shadow: 
+        0 0 20px var(--glow-red),
+        0 0 40px var(--glow-red),
+        0 0 60px var(--glow-red);
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      animation: titleGlow 2s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+
+    .users-title h1::before {
+      content: '🥷 ';
+      filter: drop-shadow(0 0 15px var(--glow-red));
+    }
+
+    .users-title h1::after {
+      content: ' 🥷';
+      filter: drop-shadow(0 0 15px var(--glow-red));
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 20px var(--glow-red),
+          0 0 40px var(--glow-red),
+          0 0 60px var(--glow-red);
+      }
+      50% {
+        text-shadow: 
+          0 0 30px var(--glow-red),
+          0 0 60px var(--glow-red),
+          0 0 90px var(--glow-red);
+      }
+    }
+
+    /* Search Section */
+    .search-info {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .search-info h5 {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 15px var(--glow-gold);
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .search-info h6 {
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--glow-green);
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .search-info strong {
+      color: var(--neon-red);
+      text-shadow: 0 0 10px var(--glow-red);
+    }
+
+    /* Search Form */
+    .search-form {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid var(--christmas-gold);
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 30px var(--glow-gold);
+    }
+
+    .form-select {
+      background: rgba(0, 0, 0, 0.9) !important;
+      border: 2px solid var(--neon-green) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 600;
+      padding: 12px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    .form-select:focus {
+      border-color: var(--christmas-gold) !important;
+      box-shadow: 0 0 20px var(--glow-gold) !important;
+      background: rgba(0, 0, 0, 0.95) !important;
+    }
+
+    .form-select option {
+      background: rgba(0, 0, 0, 0.95);
+      color: var(--christmas-white);
+    }
+
+    .form-control {
+      background: rgba(0, 0, 0, 0.9) !important;
+      border: 2px solid var(--neon-green) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 600;
+      padding: 12px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-control:focus {
+      border-color: var(--christmas-gold) !important;
+      box-shadow: 0 0 20px var(--glow-gold) !important;
+      background: rgba(0, 0, 0, 0.95) !important;
+      color: var(--christmas-white) !important;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--neon-red), var(--christmas-red)) !important;
+      border: 2px solid var(--neon-red) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 700;
+      padding: 12px 20px;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 0 0 20px var(--glow-red) !important;
+      transition: all 0.3s ease !important;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #ff3333, var(--neon-red)) !important;
+      box-shadow: 0 0 30px var(--glow-red), 0 0 60px var(--glow-red) !important;
+      transform: translateY(-2px) !important;
+      border-color: var(--christmas-gold) !important;
+    }
+
+    /* Divider */
+    hr {
+      border: none;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--christmas-gold), transparent);
+      margin: 40px 0;
+      box-shadow: 0 0 15px var(--glow-gold);
+    }
+
+    /* Table Styling */
+    .table {
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid var(--christmas-gold);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 30px var(--glow-gold);
+      color: var(--christmas-white);
+    }
+
+    .table thead {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(0, 255, 0, 0.3));
+      border-bottom: 3px solid var(--christmas-gold);
+    }
+
+    .table thead th {
+      color: var(--christmas-gold);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 18px 15px;
+      text-shadow: 0 0 15px var(--glow-gold);
+      border: none;
+    }
+
+    .table tbody tr {
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+      background: rgba(0, 255, 0, 0.15);
+      box-shadow: inset 0 0 30px var(--glow-green);
+      transform: scale(1.01);
+    }
+
+    .table tbody td {
+      color: var(--christmas-white);
+      font-size: 1rem;
+      padding: 15px;
+      border: none;
+      vertical-align: middle;
+    }
+
+    .table tbody td a {
+      color: var(--neon-green);
+      text-decoration: none;
+      font-weight: 700;
+      text-shadow: 0 0 10px var(--glow-green);
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .table tbody td a:hover {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 15px var(--glow-gold);
+      text-decoration: underline;
+    }
+
+    .table tbody td i {
+      color: var(--christmas-gold);
+      transition: all 0.3s ease;
+      text-shadow: 0 0 10px var(--glow-gold);
+    }
+
+    .table tbody td a:hover i {
+      color: var(--neon-green);
+      text-shadow: 0 0 15px var(--glow-green);
+      transform: scale(1.2);
+    }
+
+    /* Badge Styling */
+    .badge.bg-primary {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(0, 255, 0, 0.3)) !important;
+      border: 2px solid var(--christmas-gold);
+      color: var(--christmas-gold) !important;
+      font-weight: 700;
+      padding: 5px 12px;
+      text-shadow: 0 0 10px var(--glow-gold);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+      letter-spacing: 1px;
+    }
+
+    .badge.bg-secondary {
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 200, 200, 0.3)) !important;
+      border: 2px solid #00ffff;
+      color: #00ffff !important;
+      font-weight: 700;
+      padding: 5px 12px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    }
+
+    /* Pagination */
+    .pagination-section {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid var(--christmas-gold);
+      border-radius: 10px;
+      padding: 25px;
+      margin-top: 30px;
+      box-shadow: 0 0 30px var(--glow-gold);
+      text-align: center;
+    }
+
+    .pagination-section a {
+      color: var(--neon-green);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin: 0 15px;
+      text-shadow: 0 0 10px var(--glow-green);
+      transition: all 0.3s ease;
+      letter-spacing: 2px;
+    }
+
+    .pagination-section a:hover {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 20px var(--glow-gold);
+      transform: scale(1.1);
+    }
+
+    .page-select {
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid var(--neon-green);
+      color: var(--christmas-white);
+      font-weight: 700;
+      padding: 8px 15px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      border-radius: 5px;
+      margin: 0 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .page-select:focus {
+      border-color: var(--christmas-gold);
+      box-shadow: 0 0 20px var(--glow-gold);
+      outline: none;
+    }
+
+    .page-select option {
+      background: rgba(0, 0, 0, 0.95);
+      color: var(--christmas-white);
+    }
+
+    .pagination-label {
+      color: var(--christmas-gold);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 0 0 15px var(--glow-gold);
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .users-title {
+        padding: 40px 0 20px 0;
+      }
+
+      .users-title h1 {
+        font-size: 2rem;
+        letter-spacing: 4px;
+      }
+
+      .search-form {
+        padding: 20px 15px;
+      }
+
+      .form-control,
+      .form-select,
+      .btn-primary {
+        padding: 10px;
+        font-size: 0.9rem;
+      }
+
+      .table thead th {
+        font-size: 0.85rem;
+        padding: 12px 10px;
+        letter-spacing: 1px;
+      }
+
+      .table tbody td {
+        font-size: 0.9rem;
+        padding: 12px 10px;
+      }
+
+      .badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+      }
+
+      .pagination-section {
+        padding: 20px 15px;
+      }
+
+      .pagination-section a {
+        font-size: 1rem;
+        margin: 0 8px;
+      }
+
+      .page-select {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <!-- Page Title -->
+    <div class="users-title">
+      <h1>{% trans %}USERS{% endtrans %}</h1>
+    </div>
+
+    <!-- Search Info -->
+    {% if q and field %}
+      <div class="search-info">
+        <h5>
+          {% trans %}Searching for users with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>{% endtrans %}
+        </h5>
+        <h6>
+          {% trans page=users.page, total=users.total %}Page {{ page }} of {{ total }} results{% endtrans %}
+        </h6>
+      </div>
+    {% endif %}
+
+    <!-- Search Form -->
+    <div class="row">
+      <div class="col-md-12">
+        {% with form = Forms.users.PublicUserSearchForm(field=field, q=q) %}
+          <form method="GET" class="row justify-content-around align-items-center search-form">
+            <div class="mb-3 col-md-2">
+              {{ form.field(class="form-select w-100") }}
+            </div>
+            <div class="mb-3 col-md-8">
+              {{ form.q(class="form-control w-100", placeholder=form.q.description) }}
+            </div>
+            <div class="mb-3 col-md-2">
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-search" aria-hidden="true"></i> Search
+              </button>
+            </div>
+          </form>
+        {% endwith %}
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Users Table -->
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-striped align-middle">
+          <thead>
+          <tr>
+            <th>{% trans %}User{% endtrans %}</th>
+            <th>{% trans %}Website{% endtrans %}</th>
+            <th class="d-none d-md-table-cell">{% trans %}Affiliation{% endtrans %}</th>
+            <th class="d-none d-md-table-cell">{% trans %}Country{% endtrans %}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for user in users.items %}
+            <tr>
+              <td>
+                {% if scores_visible() %}
+                  <a href="{{ url_for('users.public', user_id=user.id) }}">
+                    {{ user.name | truncate(50) }}
+                  </a>
+                {% else %}
+                  <span>{{ user.name | truncate(50) }}</span>
+                {% endif %}
+
+                {% if user.bracket_id %}
+                  <span class="badge bg-secondary ms-2">{{ user.bracket.name }}</span>
+                {% endif %}
+
+                {% if user.oauth_id %}
+                  <a href="https://majorleaguecyber.org/u/{{ user.name }}">
+                    <span class="badge bg-primary ms-2">{% trans %}Official{% endtrans %}</span>
+                  </a>
+                {% endif %}
+              </td>
+
+              <td class="text-center" style="width: 10px;">
+                {% if user.website and (user.website.startswith('http://') or user.website.startswith('https://')) %}
+                  <a href="{{ user.website }}" target="_blank" rel="noopener">
+                    <i
+                        class="fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+                        title="{{ user.website }}"
+                    ></i>
+                  </a>
+                {% endif %}
+              </td>
+
+              <td class="d-none d-md-table-cell d-lg-table-cell">
+                {% if user.affiliation %}
+                  {% if user.affiliation | length > 50 %}
+                    <span data-toggle="tooltip" data-placement="top" title="{{ user.affiliation }}">
+									{% if user.affiliation %}{{ user.affiliation | truncate(50) }}{% endif %}
+								</span>
+                  {% else %}
+                    <span>
+									{% if user.affiliation %}{{ user.affiliation | truncate(50) }}{% endif %}
+								</span>
+                  {% endif %}
+                {% endif %}
+              </td>
+              <td class="d-none d-md-table-cell d-lg-table-cell">
+								<span>
+									{% if user.country %}
+                    <i class="flag-{{ user.country.lower() }}"></i>
+                    {{ lookup_country_code(user.country) }}
+                  {% endif %}
+								</span>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if users.pages > 1 %}
+      <div class="row">
+        <div class="col-md-12">
+          <div class="pagination-section">
+            <span class="pagination-label">{% trans %}Page{% endtrans %}</span>
+
+            {% if users.page != 1 %}
+              <a href="{{ prev_page }}">&lt;&lt;&lt;</a>
+            {% endif %}
+
+            <select class="page-select">
+              {% for page in range(1, users.pages + 1) %}
+                <option {% if users.page == page %}selected{% endif %}>{{ page }}</option>
+              {% endfor %}
+            </select>
+
+            {% if users.next_num %}
+              <a href="{{ next_page }}">&gt;&gt;&gt;</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/users/list.js") }}
+{% endblock %}

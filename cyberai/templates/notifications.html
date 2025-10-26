@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    /* Navbar positioning */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      width: 100%;
+    }
+
+    /* Adjust body for fixed navbar */
+    body {
+      padding-top: 70px;
+    }
+
+    /* Apply background directly to main element */
+    main {
+      background: linear-gradient(
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.7)
+      ), url('/themes/cyberai/static/img/notifications.png') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      min-height: calc(100vh - 150px) !important;
+      position: relative;
+    }
+
+    /* Page Title Section */
+    .notifications-title {
+      padding: 80px 0 40px 0;
+      text-align: center;
+    }
+
+    .notifications-title h1 {
+      color: var(--neon-red);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-shadow: 
+        0 0 20px var(--glow-red),
+        0 0 40px var(--glow-red),
+        0 0 60px var(--glow-red);
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      animation: titleGlow 2s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+
+    .notifications-title h1::before {
+      content: '🔔 ';
+      filter: drop-shadow(0 0 15px var(--glow-gold));
+    }
+
+    .notifications-title h1::after {
+      content: ' 🔔';
+      filter: drop-shadow(0 0 15px var(--glow-gold));
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 20px var(--glow-red),
+          0 0 40px var(--glow-red),
+          0 0 60px var(--glow-red);
+      }
+      50% {
+        text-shadow: 
+          0 0 30px var(--glow-red),
+          0 0 60px var(--glow-red),
+          0 0 90px var(--glow-red);
+      }
+    }
+
+    /* No Notifications Message */
+    .no-notifications {
+      text-align: center;
+      margin: 50px auto;
+      max-width: 600px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid var(--christmas-gold);
+      border-radius: 10px;
+      padding: 30px 35px;
+      box-shadow: 0 0 25px var(--glow-gold);
+    }
+
+    .no-notifications h2 {
+      color: var(--christmas-gold);
+      font-weight: 800;
+      font-size: 1.4rem;
+      text-shadow: 0 0 15px var(--glow-gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    /* Notification Card */
+    .notification-card {
+      background: rgba(0, 0, 0, 0.9) !important;
+      border: 3px solid var(--neon-green) !important;
+      border-radius: 12px !important;
+      padding: 0 !important;
+      margin-bottom: 30px !important;
+      box-shadow: 0 0 30px var(--glow-green) !important;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .notification-card:hover {
+      border-color: var(--christmas-gold) !important;
+      box-shadow: 0 0 40px var(--glow-gold), 0 0 80px var(--glow-gold) !important;
+      transform: translateY(-5px);
+    }
+
+    .notification-card .card-body {
+      padding: 30px !important;
+      background: transparent !important;
+    }
+
+    /* Card Title */
+    .notification-card .card-title {
+      color: var(--neon-red);
+      font-weight: 900;
+      font-size: 1.8rem;
+      text-shadow: 0 0 15px var(--glow-red);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--christmas-gold);
+      box-shadow: 0 2px 15px var(--glow-gold);
+    }
+
+    .notification-card .card-title::before {
+      content: '📢 ';
+      filter: drop-shadow(0 0 10px var(--glow-red));
+      margin-right: 10px;
+    }
+
+    /* Blockquote */
+    .notification-card .blockquote {
+      margin: 0 !important;
+      padding: 0 !important;
+      border-left: none !important;
+    }
+
+    .notification-card .blockquote p {
+      color: var(--christmas-white);
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.8;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+    }
+
+    /* Date/Time */
+    .notification-card .text-muted {
+      color: var(--neon-green) !important;
+      font-weight: 700;
+      text-shadow: 0 0 10px var(--glow-green) !important;
+      letter-spacing: 1px;
+      font-size: 0.95rem;
+      display: inline-block;
+      padding: 8px 15px;
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+    }
+
+    .notification-card .text-muted::before {
+      content: '⏰ ';
+      filter: drop-shadow(0 0 5px var(--glow-green));
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .notifications-title {
+        padding: 40px 0 20px 0;
+      }
+
+      .notifications-title h1 {
+        font-size: 2rem;
+        letter-spacing: 4px;
+      }
+
+      .no-notifications {
+        padding: 25px 20px;
+        margin: 30px auto;
+      }
+
+      .no-notifications h2 {
+        font-size: 1.1rem;
+        letter-spacing: 1.5px;
+      }
+
+      .notification-card .card-body {
+        padding: 20px !important;
+      }
+
+      .notification-card .card-title {
+        font-size: 1.4rem;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+      }
+
+      .notification-card .blockquote p {
+        font-size: 1rem;
+      }
+
+      .notification-card .text-muted {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <!-- Page Title -->
+    <div class="notifications-title">
+      <h1>{% trans %}NOTIFICATIONS{% endtrans %}</h1>
+    </div>
+
+    <!-- No Notifications Message -->
+    {% if not notifications %}
+      <div class="no-notifications">
+        <h2>{% trans %}There are no notifications yet{% endtrans %}</h2>
+      </div>
+    {% endif %}
+
+    <!-- Notification Cards -->
+    {% for notification in notifications %}
+      <div class="card notification-card bg-body-tertiary">
+        <div class="card-body">
+          <h3 class="card-title">{{ notification.title }}</h3>
+          <blockquote class="blockquote mb-0">
+            <p>{{ notification.html }}</p>
+            <small class="text-muted"><span data-time="{{ notification.date | isoformat }}"></span></small>
+          </blockquote>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+{% block scripts %}
+  {{ Assets.js("assets/js/notifications.js") }}
+{% endblock %}

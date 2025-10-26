@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    /* Navbar positioning */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      width: 100%;
+    }
+
+    /* Adjust body for fixed navbar */
+    body {
+      padding-top: 70px;
+    }
+
+    /* Apply background directly to main element */
+    main {
+      background: linear-gradient(
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.7)
+      ), url('/themes/cyberai/static/img/login.png') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      min-height: calc(100vh - 150px) !important;
+      position: relative;
+    }
+
+    /* Page Title Section */
+    .login-title {
+      padding: 60px 0 30px 0;
+      text-align: center;
+    }
+
+    .login-title h1 {
+      color: var(--neon-red);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 6px;
+      font-size: 2.5rem;
+      text-shadow: 
+        0 0 20px var(--glow-red),
+        0 0 40px var(--glow-red),
+        0 0 60px var(--glow-red);
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      animation: titleGlow 2s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+
+    .login-title h1::before {
+      content: '🔐 ';
+      filter: drop-shadow(0 0 15px var(--glow-gold));
+    }
+
+    .login-title h1::after {
+      content: ' 🔐';
+      filter: drop-shadow(0 0 15px var(--glow-gold));
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 20px var(--glow-red),
+          0 0 40px var(--glow-red),
+          0 0 60px var(--glow-red);
+      }
+      50% {
+        text-shadow: 
+          0 0 30px var(--glow-red),
+          0 0 60px var(--glow-red),
+          0 0 90px var(--glow-red);
+      }
+    }
+
+    /* Login Form Container */
+    .login-container {
+      max-width: 500px;
+      margin: 0 auto 50px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid var(--christmas-gold);
+      border-radius: 10px;
+      padding: 35px 30px;
+      box-shadow: 0 0 25px var(--glow-gold);
+    }
+
+    /* MLC Button */
+    .btn-mlc {
+      background: linear-gradient(135deg, var(--neon-cyan), var(--christmas-green)) !important;
+      border: 2px solid var(--neon-cyan) !important;
+      color: white !important;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px var(--glow-cyan);
+      transition: all 0.3s ease;
+      border-radius: 6px;
+    }
+
+    .btn-mlc:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px var(--glow-cyan);
+      background: linear-gradient(135deg, var(--christmas-green), var(--neon-cyan)) !important;
+    }
+
+    /* HR Divider */
+    .login-container hr {
+      border-color: var(--christmas-gold);
+      opacity: 0.3;
+      margin: 25px 0;
+    }
+
+    /* Form Labels */
+    .login-container label {
+      color: var(--christmas-gold);
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      text-shadow: 0 0 10px var(--glow-gold);
+      margin-bottom: 8px;
+    }
+
+    /* Form Inputs */
+    .login-container .form-control {
+      background: rgba(0, 0, 0, 0.7) !important;
+      border: 1px solid var(--neon-green) !important;
+      color: var(--neon-green) !important;
+      padding: 12px 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 12px var(--glow-green);
+      transition: all 0.3s ease;
+      border-radius: 6px;
+    }
+
+    .login-container .form-control:focus {
+      box-shadow: 0 0 20px var(--glow-green);
+      border-color: var(--christmas-gold) !important;
+      outline: none;
+      background: rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .login-container .form-control::placeholder {
+      color: rgba(0, 255, 0, 0.5);
+    }
+
+    /* Submit Button */
+    .login-container .btn-primary {
+      background: linear-gradient(135deg, var(--christmas-red), var(--neon-pink)) !important;
+      border: 2px solid var(--neon-red) !important;
+      color: white !important;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px var(--glow-red);
+      transition: all 0.3s ease;
+      border-radius: 6px;
+    }
+
+    .login-container .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px var(--glow-red);
+      background: linear-gradient(135deg, var(--neon-pink), var(--christmas-red)) !important;
+    }
+
+    /* Forgot Password Link */
+    .forgot-password-link {
+      color: var(--neon-cyan);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .forgot-password-link:hover {
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--glow-green);
+      text-decoration: underline;
+    }
+
+    /* Form Row Spacing */
+    .login-container .mb-3 {
+      margin-bottom: 20px;
+    }
+
+    .login-container .pt-3 {
+      padding-top: 25px;
+    }
+
+    /* Align Items in Row */
+    .login-container .row {
+      display: flex;
+      align-items: center;
+    }
+
+    /* Error Messages */
+    .alert {
+      border-radius: 8px;
+      padding: 12px 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .alert-danger {
+      background: rgba(255, 0, 0, 0.15) !important;
+      border: 1px solid var(--neon-red) !important;
+      color: var(--neon-red) !important;
+      box-shadow: 0 0 18px var(--glow-red);
+    }
+
+    .alert-success {
+      background: rgba(0, 255, 0, 0.15) !important;
+      border: 1px solid var(--neon-green) !important;
+      color: var(--neon-green) !important;
+      box-shadow: 0 0 18px var(--glow-green);
+    }
+
+    .alert-info {
+      background: rgba(0, 245, 255, 0.15) !important;
+      border: 1px solid var(--neon-cyan) !important;
+      color: var(--neon-cyan) !important;
+      box-shadow: 0 0 18px var(--glow-cyan);
+    }
+
+    .alert-warning {
+      background: rgba(255, 215, 0, 0.15) !important;
+      border: 1px solid var(--christmas-gold) !important;
+      color: var(--christmas-gold) !important;
+      box-shadow: 0 0 18px var(--glow-gold);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .login-title {
+        padding: 35px 0 20px 0;
+      }
+
+      .login-title h1 {
+        font-size: 1.8rem;
+        letter-spacing: 3px;
+      }
+
+      .login-container {
+        padding: 25px 20px;
+        margin-bottom: 30px;
+      }
+
+      .login-container .form-control,
+      .login-container .btn-primary,
+      .btn-mlc {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+      }
+
+      .login-container .row .col-6 {
+        margin-bottom: 10px;
+      }
+
+      .forgot-password-link {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <div class="login-title">
+      <h1>{% trans %}Jack In{% endtrans %}</h1>
+    </div>
+
+    <div class="login-container">
+      {% include "components/errors.html" %}
+      
+      {% if integrations.mlc() %}
+        <a class="btn btn-mlc btn-lg btn-block w-100" href="{{ url_for('auth.oauth_login') }}">
+          Login with Major League Cyber
+        </a>
+        <hr>
+      {% endif %}
+
+      {% with form = Forms.auth.LoginForm() %}
+        <form method="post" accept-charset="utf-8">
+          <div class="mb-3">
+            <b>{{ form.name.label(class="form-label") }}</b>
+            {{ form.name(class="form-control", value=name, autocomplete="username email", placeholder="Enter your username or email") }}
+          </div>
+          <div class="mb-3">
+            <b>{{ form.password.label(class="form-label") }}</b>
+            {{ form.password(class="form-control", value=password, autocomplete="current-password", placeholder="Enter your password") }}
+          </div>
+          <div class="row pt-3">
+            <div class="col-12 col-md-7 mb-2 mb-md-0">
+              <a class="forgot-password-link" href="{{ url_for('auth.reset_password') }}">
+                {% trans %}Forgot your password?{% endtrans %}
+              </a>
+            </div>
+            <div class="col-12 col-md-5">
+              {{ form.submit(class="btn btn-block btn-primary w-100") }}
+            </div>
+          </div>
+          {{ form.nonce() }}
+        </form>
+      {% endwith %}
+    </div>
+  </div>
+{% endblock %}
