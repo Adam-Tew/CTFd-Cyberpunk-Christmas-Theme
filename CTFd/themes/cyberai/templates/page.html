@@ -1,0 +1,1018 @@
+{% extends "base.html" %}
+{% block content %}
+  <!-- Terminal Boot Sequence -->
+  <div id="terminal-boot" class="terminal-container">
+    <div class="crt-effect"></div>
+    
+    <!-- Snowflakes decoration -->
+    <div class="snowflakes" aria-hidden="true">
+      <div class="snowflake">❅</div>
+      <div class="snowflake">❆</div>
+      <div class="snowflake">❅</div>
+      <div class="snowflake">❆</div>
+      <div class="snowflake">❅</div>
+      <div class="snowflake">❆</div>
+      <div class="snowflake">❅</div>
+    </div>
+    
+    <!-- Control prompts outside terminal -->
+    <div class="control-prompts">
+      <div class="sound-prompt-outer">[PRESS SPACE KEY FOR Christmas Spirits]</div>
+      <div class="skip-prompt-outer">[PRESS ESC TO SKIP TO MENU]</div>
+    </div>
+    
+    <div class="terminal-screen">
+      <div id="terminal-content"></div>
+    </div>
+  </div>
+
+  <!-- Wake Up Samurai Title Screen -->
+  <div id="title-screen" class="title-screen" style="display: none;">
+    <div class="snowflakes" aria-hidden="true">
+      <div class="snowflake">❅</div>
+      <div class="snowflake">❆</div>
+      <div class="snowflake">❅</div>
+      <div class="snowflake">❆</div>
+      <div class="snowflake">❅</div>
+      <div class="snowflake">❆</div>
+      <div class="snowflake">❅</div>
+    </div>
+    <div class="title-content">
+      <h1 class="game-title glitch" data-text="WAKE UP SAMURAI">WAKE UP SANTARAI</h1>
+      <p class="subtitle" id="christmas-subtitle" style="opacity: 0;">It's Christmas Time</p>
+    </div>
+  </div>
+
+  <!-- Game Menu -->
+  <div id="game-menu" class="game-menu-container" style="display: none;">
+    <!-- Snowflakes decoration -->
+    <div class="snowflakes" aria-hidden="true">
+      <div class="snowflake">❅</div>
+      <div class="snowflake">❆</div>
+      <div class="snowflake">❅</div>
+      <div class="snowflake">❆</div>
+      <div class="snowflake">❅</div>
+      <div class="snowflake">❆</div>
+      <div class="snowflake">❅</div>
+    </div>
+
+    <!-- Christmas ornaments decoration -->
+    <div class="ornaments">
+      <div class="ornament ornament-1">🎄</div>
+      <div class="ornament ornament-2">⛄</div>
+      <div class="ornament ornament-3">🎁</div>
+      <div class="ornament ornament-4">🔔</div>
+    </div>
+
+    <div class="game-menu">
+      <h1 class="menu-title" data-text="WAKE UP SAMURAI">WAKE UP SANTARAI</h1>
+      <p class="menu-subtitle">It's Christmas Time</p>
+      <div class="menu-divider"></div>
+      <ul class="menu-options" id="menu-list">
+        <li class="menu-item active" data-url="{{ url_for('challenges.listing') }}">
+          <span class="menu-arrow">🎄</span> 
+          <span class="menu-text">START MISSIONS</span>
+        </li>
+        <li class="menu-item" data-url="{{ url_for('scoreboard.listing') }}">
+          <span class="menu-arrow">🎄</span>
+          <span class="menu-text">CHECK HONOR BOARD</span>
+        </li>
+        <li class="menu-item" data-url="{{ url_for('users.listing') }}">
+          <span class="menu-arrow">🎄</span>
+          <span class="menu-text">FIND RONIN</span>
+        </li>
+        {% if Configs.user_mode == 'teams' %}
+        <li class="menu-item" data-url="{{ url_for('teams.listing') }}">
+          <span class="menu-arrow">🎄</span>
+          <span class="menu-text">VIEW CLANS</span>
+        </li>
+        <li class="menu-item" data-url="{{ url_for('teams.private') }}">
+          <span class="menu-arrow">🎄</span>
+          <span class="menu-text">MY CLAN</span>
+        </li>
+        {% endif %}
+        {% if authed() %}
+        <li class="menu-item" data-url="{{ url_for('users.private') }}">
+          <span class="menu-arrow">🎄</span>
+          <span class="menu-text">WHOAMI</span>
+        </li>
+        <li class="menu-item" data-url="{{ url_for('views.settings') }}">
+          <span class="menu-arrow">🎄</span>
+          <span class="menu-text">SYSCONFIG</span>
+        </li>
+        <li class="menu-item" data-url="{{ url_for('auth.logout') }}">
+          <span class="menu-arrow">🎄</span>
+          <span class="menu-text">JACK OUT</span>
+        </li>
+        {% else %}
+        <li class="menu-item" data-url="{{ url_for('auth.login') }}">
+          <span class="menu-arrow">🎄</span>
+          <span class="menu-text">JACK IN</span>
+        </li>
+        {% if registration_visible() %}
+        <li class="menu-item" data-url="{{ url_for('auth.register') }}">
+          <span class="menu-arrow">🎄</span>
+          <span class="menu-text">ENTER THE CYBERNET</span>
+        </li>
+        {% endif %}
+        {% endif %}
+      </ul>
+      <div class="menu-divider"></div>
+      <div class="menu-footer">CTF Proudly Created by Outpost24 Team</div>
+    </div>
+  </div>
+
+  <!-- Original Content (Hidden) -->
+  <div class="container" id="original-content" style="display: none;">
+    {{ content | safe }}
+  </div>
+
+  <style>
+    :root {
+      --christmas-red: #c41e3a;
+      --christmas-green: #165b33;
+      --christmas-gold: #ffd700;
+      --christmas-white: #ffffff;
+      --neon-red: #ff0000;
+      --neon-green: #00ff00;
+      --glow-red: rgba(255, 0, 0, 0.8);
+      --glow-green: rgba(0, 255, 0, 0.8);
+      --glow-gold: rgba(255, 215, 0, 0.8);
+    }
+
+    /* Snowflakes Animation */
+    .snowflakes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .snowflake {
+      position: absolute;
+      top: -10%;
+      color: var(--christmas-white);
+      font-size: 1.5rem;
+      opacity: 0.8;
+      animation: fall linear infinite;
+      text-shadow: 0 0 10px var(--christmas-white);
+    }
+
+    .snowflake:nth-child(1) { left: 10%; animation-duration: 12s; animation-delay: 0s; }
+    .snowflake:nth-child(2) { left: 20%; animation-duration: 15s; animation-delay: 2s; font-size: 1.2rem; }
+    .snowflake:nth-child(3) { left: 30%; animation-duration: 10s; animation-delay: 4s; font-size: 1.8rem; }
+    .snowflake:nth-child(4) { left: 50%; animation-duration: 13s; animation-delay: 1s; }
+    .snowflake:nth-child(5) { left: 60%; animation-duration: 11s; animation-delay: 3s; font-size: 1.4rem; }
+    .snowflake:nth-child(6) { left: 75%; animation-duration: 14s; animation-delay: 5s; }
+    .snowflake:nth-child(7) { left: 85%; animation-duration: 12s; animation-delay: 2.5s; font-size: 1.6rem; }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh);
+      }
+    }
+
+    /* Christmas Ornaments */
+    .ornaments {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .ornament {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.6;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .ornament-1 { top: 10%; left: 5%; animation-delay: 0s; }
+    .ornament-2 { top: 20%; right: 5%; animation-delay: 1.5s; }
+    .ornament-3 { bottom: 20%; left: 10%; animation-delay: 3s; }
+    .ornament-4 { bottom: 15%; right: 8%; animation-delay: 4.5s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    /* Terminal Boot Styles */
+    .terminal-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .terminal-container .control-prompts {
+      display: block;
+    }
+
+    .crt-effect {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 0, 0.05),
+        rgba(0, 255, 0, 0.05) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      animation: crtFlicker 0.15s infinite;
+    }
+
+    @keyframes crtFlicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.95; }
+    }
+
+    .terminal-screen {
+      width: 90%;
+      max-width: 900px;
+      height: 80%;
+      background: rgba(0, 0, 0, 0.95);
+      border: 3px solid var(--neon-green);
+      box-shadow: 
+        0 0 30px var(--glow-green),
+        inset 0 0 50px rgba(0, 255, 0, 0.1);
+      padding: 30px;
+      font-family: 'Courier New', monospace;
+      color: var(--neon-green);
+      font-size: 18px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      text-shadow: 0 0 5px var(--neon-green);
+      scroll-behavior: smooth;
+      position: relative;
+      z-index: 2;
+    }
+
+    #terminal-content {
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .terminal-line {
+      margin-bottom: 10px;
+    }
+
+    /* Color classes for different speakers */
+    .speaker-system {
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--glow-green);
+    }
+
+    .speaker-mrs-claus {
+      color: var(--neon-red);
+      text-shadow: 0 0 10px var(--glow-red);
+    }
+
+    .speaker-elf {
+      color: var(--christmas-white);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    .speaker-action {
+      color: var(--christmas-gold);
+      text-shadow: 0 0 10px var(--glow-gold);
+      font-style: italic;
+    }
+
+    .speaker-rudolf {
+      color: #ff9900;
+      text-shadow: 0 0 10px rgba(255, 153, 0, 0.8);
+    }
+
+    .speaker-santarai {
+      color: #00ffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    }
+
+    .glitch-text {
+      animation: textGlitch 0.3s ease-in-out;
+    }
+
+    @keyframes textGlitch {
+      0%, 100% { transform: translate(0); }
+      25% { transform: translate(-2px, 2px); }
+      50% { transform: translate(2px, -2px); }
+      75% { transform: translate(-2px, -2px); }
+    }
+
+    /* Control prompts outside terminal */
+    .control-prompts {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      z-index: 10;
+      text-align: right;
+    }
+
+    .sound-prompt-outer {
+      font-size: 16px;
+      color: var(--neon-green);
+      text-shadow: 0 0 15px var(--glow-green);
+      margin-bottom: 10px;
+      font-family: 'Courier New', monospace;
+      animation: blink 1.5s infinite;
+      letter-spacing: 2px;
+    }
+
+    .skip-prompt-outer {
+      font-size: 16px;
+      color: var(--neon-red);
+      text-shadow: 0 0 15px var(--glow-red);
+      font-family: 'Courier New', monospace;
+      opacity: 0.9;
+      letter-spacing: 2px;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    /* Title Screen */
+    .title-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 99998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .title-content {
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .game-title {
+      font-size: 6rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 10px;
+      background: linear-gradient(45deg, #ff006e, #00f5ff, #ffee00, #ff006e);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s ease infinite;
+      position: relative;
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      margin-bottom: 20px;
+      transition: all 1s ease;
+    }
+
+    .game-title.christmas-mode {
+      background: linear-gradient(45deg, var(--neon-red), var(--neon-green), var(--christmas-gold), var(--neon-red));
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: christmasGradient 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes christmasGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--christmas-gold);
+      text-shadow: 
+        0 0 20px var(--glow-gold),
+        0 0 40px var(--glow-gold),
+        0 0 60px var(--glow-gold);
+      letter-spacing: 3px;
+      font-family: 'Courier New', monospace;
+      animation: subtitleGlow 2s ease-in-out infinite;
+      margin: 0;
+      transition: opacity 1s ease;
+    }
+
+    @keyframes subtitleGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 20px var(--glow-gold),
+          0 0 40px var(--glow-gold),
+          0 0 60px var(--glow-gold);
+      }
+      50% {
+        text-shadow: 
+          0 0 30px var(--glow-gold),
+          0 0 60px var(--glow-gold),
+          0 0 90px var(--glow-gold);
+      }
+    }
+
+    .glitch {
+      position: relative;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #ff006e, #00f5ff, #ffee00, #ff006e);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .glitch.christmas-mode::before,
+    .glitch.christmas-mode::after {
+      background: linear-gradient(45deg, var(--neon-red), var(--neon-green), var(--christmas-gold), var(--neon-red));
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 #00f5ff;
+      clip: rect(24px, 9999px, 90px, 0);
+      animation: glitchAnim 3s infinite linear alternate-reverse;
+    }
+
+    .glitch::after {
+      left: -2px;
+      text-shadow: -2px 0 #ff006e;
+      clip: rect(85px, 9999px, 140px, 0);
+      animation: glitchAnim 2s infinite linear alternate-reverse;
+    }
+
+    .glitch.christmas-mode::before {
+      text-shadow: -2px 0 var(--neon-green);
+    }
+
+    .glitch.christmas-mode::after {
+      text-shadow: -2px 0 var(--neon-red);
+    }
+
+    @keyframes glitchAnim {
+      0% { clip: rect(10px, 9999px, 31px, 0); }
+      25% { clip: rect(70px, 9999px, 71px, 0); }
+      50% { clip: rect(30px, 9999px, 91px, 0); }
+      75% { clip: rect(50px, 9999px, 11px, 0); }
+      100% { clip: rect(80px, 9999px, 21px, 0); }
+    }
+
+    /* Game Menu */
+    .game-menu-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(
+        rgba(0, 0, 0, 0.75),
+        rgba(0, 0, 0, 0.85)
+      ), url('/themes/cyberai/static/img/page.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      z-index: 99997;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .game-menu {
+      text-align: center;
+      max-width: 550px;
+      max-height: 85vh;
+      width: 90%;
+      position: relative;
+      z-index: 2;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 30px 25px;
+      border: 3px solid var(--christmas-gold);
+      border-radius: 15px;
+      box-shadow: 
+        0 0 50px var(--glow-gold),
+        inset 0 0 40px rgba(255, 215, 0, 0.1);
+      backdrop-filter: blur(15px);
+      overflow-y: auto;
+    }
+
+    .menu-title {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+      letter-spacing: 8px;
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      background: linear-gradient(45deg, var(--neon-red), var(--neon-green), var(--christmas-gold), var(--neon-red));
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: christmasGradient 3s ease infinite;
+      position: relative;
+    }
+
+    .menu-subtitle {
+      font-size: 1.2rem;
+      color: var(--christmas-gold);
+      text-shadow: 0 0 20px var(--glow-gold);
+      margin-bottom: 20px;
+      letter-spacing: 4px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .menu-divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--christmas-gold), transparent);
+      margin: 25px 0;
+      box-shadow: 0 0 10px var(--glow-gold);
+    }
+
+    .glitch-menu {
+      position: relative;
+    }
+
+    .glitch-menu::before,
+    .glitch-menu::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--neon-red), var(--neon-green), var(--christmas-gold), var(--neon-red));
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .glitch-menu::before {
+      left: 2px;
+      text-shadow: -2px 0 var(--neon-green);
+      clip: rect(24px, 9999px, 90px, 0);
+      animation: glitchAnim 3s infinite linear alternate-reverse;
+    }
+
+    .glitch-menu::after {
+      left: -2px;
+      text-shadow: -2px 0 var(--neon-red);
+      clip: rect(85px, 9999px, 140px, 0);
+      animation: glitchAnim 2s infinite linear alternate-reverse;
+    }
+
+    .menu-options {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .menu-item {
+      font-size: 1.4rem;
+      font-weight: 700;
+      padding: 8px 20px;
+      margin: 8px 0;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 3px;
+      position: relative;
+      font-family: 'Courier New', monospace;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-text {
+      position: relative;
+      z-index: 1;
+    }
+
+    .menu-arrow {
+      position: absolute;
+      left: 20px;
+      opacity: 0;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 0 10px var(--glow-green));
+      font-size: 1.5rem;
+    }
+
+    .menu-item.active {
+      color: var(--neon-green);
+      text-shadow: 0 0 20px var(--glow-green);
+      background: rgba(0, 255, 0, 0.1);
+      border-color: var(--neon-green);
+      box-shadow: 0 0 20px var(--glow-green);
+    }
+
+    .menu-item.active .menu-arrow {
+      opacity: 1;
+      left: 30px;
+    }
+
+    .menu-item:hover {
+      color: var(--neon-red);
+      text-shadow: 0 0 20px var(--glow-red);
+      background: rgba(255, 0, 0, 0.1);
+      border-color: var(--neon-red);
+      box-shadow: 0 0 25px var(--glow-red);
+      transform: scale(1.02);
+    }
+
+    .menu-item:hover .menu-arrow {
+      opacity: 1;
+      left: 30px;
+      filter: drop-shadow(0 0 15px var(--glow-red));
+    }
+
+    .menu-footer {
+      margin-top: 30px;
+      color: var(--christmas-gold);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      opacity: 0.6;
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 8px var(--glow-gold);
+    }
+
+    /* Hide navbar and footer during sequence */
+    .terminal-container ~ nav,
+    .terminal-container ~ footer,
+    .title-screen ~ nav,
+    .title-screen ~ footer {
+      display: none !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .game-title {
+        font-size: 3rem;
+        letter-spacing: 5px;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+        letter-spacing: 2px;
+      }
+
+      .menu-title {
+        font-size: 2rem;
+        letter-spacing: 4px;
+        margin-bottom: 10px;
+      }
+
+      .menu-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+      }
+
+      .menu-item {
+        font-size: 1.1rem;
+        padding: 15px 15px;
+        letter-spacing: 2px;
+      }
+
+      .menu-arrow {
+        font-size: 1.2rem;
+        left: 15px;
+      }
+
+      .menu-item.active .menu-arrow,
+      .menu-item:hover .menu-arrow {
+        left: 20px;
+      }
+
+      .terminal-screen {
+        font-size: 14px;
+        padding: 20px;
+      }
+
+      .game-menu {
+        padding: 35px 20px;
+      }
+
+      .snowflake {
+        font-size: 1rem;
+      }
+
+      .control-prompts {
+        top: 15px;
+        right: 15px;
+      }
+
+      .sound-prompt-outer,
+      .skip-prompt-outer {
+        font-size: 12px;
+        letter-spacing: 1px;
+      }
+    }
+  </style>
+
+  <script>
+    // Terminal boot sequence
+    const terminalContent = document.getElementById('terminal-content');
+    const terminalScreen = document.querySelector('.terminal-screen');
+    const terminalBoot = document.getElementById('terminal-boot');
+    const titleScreen = document.getElementById('title-screen');
+    const gameMenu = document.getElementById('game-menu');
+
+    // Game menu navigation - initialize immediately
+    const menuItems = document.querySelectorAll('.menu-item');
+    let currentIndex = 0;
+
+    function updateSelection(index) {
+      menuItems.forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+      });
+      currentIndex = index;
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (gameMenu.style.display === 'flex') {
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          currentIndex = (currentIndex - 1 + menuItems.length) % menuItems.length;
+          updateSelection(currentIndex);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          currentIndex = (currentIndex + 1) % menuItems.length;
+          updateSelection(currentIndex);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          const url = menuItems[currentIndex].dataset.url;
+          if (url) window.location.href = url;
+        }
+      }
+    });
+
+    // Click navigation
+    menuItems.forEach((item, index) => {
+      item.addEventListener('click', () => {
+        const url = item.dataset.url;
+        if (url) window.location.href = url;
+      });
+
+      item.addEventListener('mouseenter', () => {
+        updateSelection(index);
+      });
+    });
+
+    // Check if user wants to skip terminal intro
+    const skipTerminalIntro = localStorage.getItem('skipTerminalIntro') === 'true';
+    
+    if (skipTerminalIntro) {
+      // Skip directly to menu
+      terminalBoot.style.display = 'none';
+      titleScreen.style.display = 'none';
+      gameMenu.style.display = 'flex';
+      document.querySelector('nav').style.display = 'block';
+      document.querySelector('footer').style.display = 'block';
+    } else {
+      // Run normal intro sequence
+
+    // Audio setup
+    const ambientSound = new Audio('/themes/cyberai/static/sounds/ambient.mp3');
+    ambientSound.loop = true;
+    ambientSound.volume = 0.5;
+
+    let audioStarted = false;
+    let dialogueComplete = false;
+    
+    // Function to start audio
+    function startAudio() {
+      if (!audioStarted) {
+        ambientSound.play().then(() => {
+          audioStarted = true;
+          console.log('Ambient sound started');
+        }).catch(err => {
+          console.log('Audio autoplay prevented:', err);
+        });
+      }
+    }
+
+    // Handle ESC key to skip at any time during terminal
+    function handleEscapeKey(e) {
+      if (e.key === 'Escape' && terminalBoot.style.display !== 'none') {
+        e.preventDefault();
+        console.log('ESC pressed - skipping to menu');
+        
+        // Skip directly to menu, keep music playing if started
+        terminalBoot.style.display = 'none';
+        gameMenu.style.display = 'flex';
+        document.querySelector('nav').style.display = 'block';
+        document.querySelector('footer').style.display = 'block';
+      }
+    }
+
+    // Handle space key for sound
+    function handleSoundKey(e) {
+      if (e.key === ' ' || e.code === 'Space') {
+        if (!audioStarted) {
+          e.preventDefault();
+          console.log('Space pressed for sound');
+          startAudio();
+        }
+      }
+    }
+
+    // Add listeners immediately
+    document.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener('keydown', handleSoundKey);
+
+    const conversation = [
+      { text: '[SYSTEM INITIALIZING...]', delay: 500, speaker: 'system' },
+      { text: '[LOADING NEURAL INTERFACE...]', delay: 800, speaker: 'system' },
+      { text: '[SCANNING CONSCIOUSNESS...]', delay: 1000, speaker: 'system' },
+      { text: '', delay: 500 },
+      { text: 'Mrs. Claus: Santa\'s little helper are you here?', delay: 100, speaker: 'mrs-claus' },
+      { text: '', delay: 300 },
+      { text: 'Santa\'s little helper: Yes, Mrs Claus how can I help?', delay: 100, speaker: 'elf' },
+      { text: '', delay: 500 },
+      { text: 'Mrs. Claus: Oh, it\'s just so terrible, Christmas is going to be ruined!', delay: 100, speaker: 'mrs-claus' },
+      { text: '', delay: 300 },
+      { text: 'Santa\'s little helper: Woah there mrs. Claus what\'s going on?', delay: 100, speaker: 'elf' },
+      { text: '', delay: 500 },
+      { text: 'Mrs. Claus: Santa had an accident, I have sent Rudolf and the other reindeer, please help Santa!', delay: 100, speaker: 'mrs-claus' },
+      { text: '', delay: 800 },
+      { text: '[Rudolf and the merry reindeer enters workshop with a hurt Santa]', delay: 800, speaker: 'action' },
+      { text: '', delay: 500 },
+      { text: 'Santa\'s little helper: Oh my goodness, what happened Rudolf?', delay: 100, speaker: 'elf' },
+      { text: '', delay: 300 },
+      { text: 'Rudolf: [Reindeer noises]', delay: 100, speaker: 'rudolf' },
+      { text: '', delay: 500 },
+      { text: 'Santa\'s little helper: WHAT!', delay: 100, speaker: 'elf' },
+      { text: '', delay: 300 },
+      { text: 'Santa\'s little helper: No seriously, what happened I don\'t speak reindeer.', delay: 100, speaker: 'elf' },
+      { text: '', delay: 500 },
+      { text: 'Mrs. Claus: Rudolf said that the Grinch shot down the sleigh. Please help him little elf!', delay: 100, speaker: 'mrs-claus' },
+      { text: '', delay: 800 },
+      { text: 'Santa\'s little helper: The body is too badly damaged, no amounts of milk and cookies are going to solve this.', delay: 100, speaker: 'elf' },
+      { text: '', delay: 500 },
+      { text: 'Mrs. Claus: Oh no!', delay: 100, speaker: 'mrs-claus' },
+      { text: '', delay: 300 },
+      { text: 'Santa\'s little helper: Don\'t worry mrs. Claus I have an idea, we will upload Santa\'s merriness and christmas spirit into the... em....', delay: 100, speaker: 'elf' },
+      { text: '', delay: 800 },
+      { text: '[The little elf started frantically looking around, and after a quick scan set its eyes on a Cyborg Samurai that little Timmy wanted for christmas]', delay: 800, speaker: 'action' },
+      { text: '', delay: 500 },
+      { text: 'Santa\'s little helper: Ah Yes! I have found a more sturdy body to toughen up Santa!', delay: 100, speaker: 'elf' },
+      { text: '', delay: 800 },
+      { text: '[Downloading sequence]:', delay: 500, speaker: 'action' },
+      { text: '[0%..................] ', delay: 200, speaker: 'system' },
+      { text: '[███░░░░░░░░░░░░░░░░] 15%', delay: 300, speaker: 'system' },
+      { text: '[██████░░░░░░░░░░░░░] 30%', delay: 300, speaker: 'system' },
+      { text: '[█████████░░░░░░░░░░] 45%', delay: 300, speaker: 'system' },
+      { text: '[████████████░░░░░░░] 60%', delay: 300, speaker: 'system' },
+      { text: '[███████████████░░░░] 75%', delay: 300, speaker: 'system' },
+      { text: '[██████████████████░] 90%', delay: 300, speaker: 'system' },
+      { text: '[████████████████████] 100%', delay: 500, speaker: 'system' },
+      { text: '', delay: 300 },
+      { text: '[Download complete]', delay: 800, speaker: 'action' },
+      { text: '', delay: 500 },
+      { text: 'Santa\'s little helper: Hello?', delay: 100, speaker: 'elf' },
+      { text: '', delay: 800 },
+      { text: 'Santarai: ...', delay: 100, speaker: 'santarai' },
+      { text: '', delay: 800 },
+      { text: 'Santa\'s little helper: Santa, are you in there?', delay: 100, speaker: 'elf' },
+      { text: '', delay: 800 },
+      { text: 'Santarai: ...', delay: 100, speaker: 'santarai' },
+      { text: '', delay: 800 },
+      { text: 'Santa\'s little helper: Santa, it\'s time to wake up.', delay: 100, speaker: 'elf' },
+      { text: '', delay: 800 },
+      { text: 'Santarai: ...', delay: 100, speaker: 'santarai' },
+      { text: '', delay: 1000 },
+      { text: 'Santa\'s little helper: I said it\'s time to wake up Santarai! It\'s Christmas time!', delay: 100, speaker: 'elf', important: true },
+    ];
+
+    let currentLine = 0;
+
+    function scrollToBottom() {
+      terminalScreen.scrollTop = terminalScreen.scrollHeight;
+    }
+
+    function typeText(text, speed = 40, speaker = null) {
+      return new Promise((resolve) => {
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+        if (speaker) {
+          line.classList.add(`speaker-${speaker}`);
+        }
+        terminalContent.appendChild(line);
+        
+        scrollToBottom();
+
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i < text.length) {
+            line.textContent += text.charAt(i);
+            i++;
+            scrollToBottom();
+          } else {
+            clearInterval(interval);
+            scrollToBottom();
+            resolve();
+          }
+        }, speed);
+      });
+    }
+
+    async function runConversation() {
+      for (const entry of conversation) {
+        if (entry.important) {
+          await typeText(entry.text, 25, entry.speaker);
+          const lastLine = terminalContent.lastChild;
+          lastLine.style.fontSize = '22px';
+          lastLine.style.fontWeight = 'bold';
+          scrollToBottom();
+        } else {
+          await typeText(entry.text, 40, entry.speaker);
+        }
+        
+        scrollToBottom();
+        await new Promise(resolve => setTimeout(resolve, entry.delay));
+      }
+
+      dialogueComplete = true;
+      
+      // Auto-redirect to title screen after 2 seconds
+      setTimeout(() => {
+        // Show title screen
+        terminalBoot.style.display = 'none';
+        titleScreen.style.display = 'flex';
+        
+        // After 1.5 seconds, show subtitle and transform colors
+        setTimeout(() => {
+          const subtitle = document.getElementById('christmas-subtitle');
+          const gameTitle = document.querySelector('.game-title');
+          const glitchTitle = document.querySelector('.glitch');
+          
+          subtitle.style.opacity = '1';
+          gameTitle.classList.add('christmas-mode');
+          glitchTitle.classList.add('christmas-mode');
+        }, 1500);
+        
+        // After 4 seconds total, show game menu
+        setTimeout(() => {
+          titleScreen.style.display = 'none';
+          gameMenu.style.display = 'flex';
+          document.querySelector('nav').style.display = 'block';
+          document.querySelector('footer').style.display = 'block';
+        }, 4000);
+      }, 2000);
+    }
+
+    // Start the sequence
+    runConversation();
+    
+    } // End of else block - skip intro check
+  </script>
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/page.js") }}
+{% endblock %}

@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    /* Navbar positioning */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+      width: 100%;
+    }
+
+    /* Adjust body for fixed navbar */
+    body {
+      padding-top: 70px;
+    }
+
+    /* Apply background directly to main element */
+    main {
+      background: linear-gradient(
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.7)
+      ), url('/themes/cyberai/static/img/enrollment.png') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      min-height: calc(100vh - 150px) !important;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Page Title Section */
+    .enrollment-title {
+      padding: 60px 0 30px 0;
+      text-align: center;
+    }
+
+    .enrollment-title h1 {
+      color: var(--neon-red);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-shadow: 
+        0 0 20px var(--glow-red),
+        0 0 40px var(--glow-red),
+        0 0 60px var(--glow-red);
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      animation: titleGlow 2s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+
+    .enrollment-title h1::before {
+      content: '⚔️ ';
+      filter: drop-shadow(0 0 15px var(--glow-gold));
+    }
+
+    .enrollment-title h1::after {
+      content: ' ⚔️';
+      filter: drop-shadow(0 0 15px var(--glow-gold));
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 20px var(--glow-red),
+          0 0 40px var(--glow-red),
+          0 0 60px var(--glow-red);
+      }
+      50% {
+        text-shadow: 
+          0 0 30px var(--glow-red),
+          0 0 60px var(--glow-red),
+          0 0 90px var(--glow-red);
+      }
+    }
+
+    /* Welcome Container */
+    .enrollment-container {
+      background: rgba(0, 0, 0, 0.9);
+      border: 3px solid var(--christmas-gold);
+      border-radius: 15px;
+      padding: 50px 40px;
+      margin-bottom: 50px;
+      box-shadow: 0 0 50px var(--glow-gold);
+      backdrop-filter: blur(15px);
+    }
+
+    /* Welcome Message */
+    .welcome-message {
+      color: var(--neon-green);
+      font-weight: 900;
+      font-size: 2rem;
+      text-shadow: 0 0 20px var(--glow-green);
+      letter-spacing: 3px;
+      margin-bottom: 25px;
+      text-transform: uppercase;
+    }
+
+    .enrollment-text {
+      color: var(--christmas-white);
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      letter-spacing: 1px;
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+
+    /* Divider */
+    .enrollment-divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--christmas-gold), transparent);
+      margin: 30px 0;
+      box-shadow: 0 0 15px var(--glow-gold);
+    }
+
+    /* Primary Button */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--neon-red), var(--christmas-red)) !important;
+      border: 2px solid var(--neon-red) !important;
+      color: var(--christmas-white) !important;
+      font-weight: 900;
+      padding: 18px 30px;
+      font-size: 1.2rem;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 0 0 30px var(--glow-red) !important;
+      transition: all 0.3s ease !important;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #ff3333, var(--neon-red)) !important;
+      box-shadow: 0 0 40px var(--glow-red), 0 0 80px var(--glow-red) !important;
+      transform: translateY(-3px) scale(1.05) !important;
+      border-color: var(--christmas-gold) !important;
+    }
+
+    /* Outline Button */
+    .btn-outline-info {
+      background: rgba(0, 255, 0, 0.1) !important;
+      border: 2px solid var(--neon-green) !important;
+      color: var(--neon-green) !important;
+      font-weight: 700;
+      padding: 15px 25px;
+      font-size: 1.1rem;
+      text-shadow: 0 0 10px var(--glow-green) !important;
+      box-shadow: 0 0 20px var(--glow-green) !important;
+      transition: all 0.3s ease !important;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-radius: 10px;
+    }
+
+    .btn-outline-info:hover {
+      background: rgba(0, 255, 0, 0.2) !important;
+      border-color: var(--christmas-gold) !important;
+      color: var(--christmas-gold) !important;
+      text-shadow: 0 0 15px var(--glow-gold) !important;
+      box-shadow: 0 0 30px var(--glow-gold), 0 0 60px var(--glow-gold) !important;
+      transform: translateY(-2px) scale(1.03) !important;
+    }
+
+    /* Button Section Spacing */
+    .button-section {
+      margin-top: 30px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .enrollment-title {
+        padding: 30px 0 20px 0;
+      }
+
+      .enrollment-title h1 {
+        font-size: 2rem;
+        letter-spacing: 4px;
+      }
+
+      .enrollment-container {
+        padding: 35px 25px;
+      }
+
+      .welcome-message {
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+      }
+
+      .enrollment-text {
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        padding: 15px 25px;
+        font-size: 1rem;
+        letter-spacing: 2px;
+      }
+
+      .btn-outline-info {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <!-- Page Title -->
+    <div class="enrollment-title">
+      <h1>{% trans %}TEAM{% endtrans %}</h1>
+    </div>
+
+    <!-- Enrollment Container -->
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <div class="enrollment-container">
+          <div class="text-center">
+            <p class="welcome-message">
+              {% trans %}Welcome to{% endtrans %} {{ Configs.ctf_name }}!
+            </p>
+            <p class="enrollment-text">
+              {% trans %}In order to participate you must either join or create a team.{% endtrans %}
+            </p>
+
+            <div class="enrollment-divider"></div>
+
+            {% if integrations.mlc() %}
+              <!-- Official Team Button -->
+              <div class="row button-section">
+                <div class="col-md-8 offset-md-2">
+                  <a class="btn btn-primary w-100" href="{{ url_for('auth.oauth_login') }}">
+                    {% trans %}Play with Official Team{% endtrans %}
+                  </a>
+                </div>
+              </div>
+
+              <!-- Unofficial Team Buttons -->
+              <div class="row button-section">
+                <div class="col-md-6">
+                  <a class="btn btn-outline-info w-100" href="{{ url_for('teams.join') }}">
+                    {% trans %}Join Unofficial Team{% endtrans %}
+                  </a>
+                </div>
+                <div class="col-md-6">
+                  <a class="btn btn-outline-info w-100" href="{{ url_for('teams.new') }}">
+                    {% trans %}Create Unofficial Team{% endtrans %}
+                  </a>
+                </div>
+              </div>
+            {% else %}
+              <!-- Join/Create Team Buttons -->
+              <div class="row button-section">
+                <div class="col-md-6">
+                  <a class="btn btn-primary w-100" href="{{ url_for('teams.join') }}">
+                    {% trans %}Join Team{% endtrans %}
+                  </a>
+                </div>
+                <div class="col-md-6">
+                  <a class="btn btn-primary w-100" href="{{ url_for('teams.new') }}">
+                    {% trans %}Create Team{% endtrans %}
+                  </a>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

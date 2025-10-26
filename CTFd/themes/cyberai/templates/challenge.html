@@ -1,0 +1,939 @@
+<div :class="getStyles()" role="document" x-data="Challenge" x-init='id = {{ challenge.id }}; max_attempts = {{ max_attempts }}; attempts = {{ attempts }}; ratingValue = {{ (rating.get('value') if rating else None) | tojson }}; ratingReview = {{ (rating.get('review', '') if rating else None) | tojson }};'>
+  <div class="modal-content cyber-modal">
+    <div class="modal-body py-3 px-3 px-sm-4">
+
+      <div>
+        <button type="button" class="btn-close float-end cyber-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        <ul class="nav nav-tabs cyber-tabs">
+          <li class="nav-item">
+            <button class="nav-link active" data-bs-target="#challenge" @click="showChallenge()">
+              <span class="tab-icon">⚡</span> {% trans %}Challenge{% endtrans %}
+            </button>
+          </li>
+
+          {% block submissions %}
+            {% if Configs.view_self_submissions %}
+            <li class="nav-item">
+              <button class="nav-link challenge-submissions" data-bs-target="#submissions" @click="showSubmissions()">
+                <span class="tab-icon">📋</span> {% if solves != None %}Submissions{% endif %}
+              </button>
+            </li>
+            {% endif %}
+          {% endblock %}
+
+          {% block solution %}
+            {% if challenge.solution_id %}
+            <li class="nav-item" x-show="getSolutionId()">
+              <button class="nav-link challenge-solution" data-bs-target="#solution" @click="showSolution()">
+                <span class="tab-icon">💡</span> {% trans %}Solution{% endtrans %}
+              </button>
+            </li>
+            {% endif %}
+          {% endblock %}
+
+          {% block solves %}
+            {% if solves != None %}
+            <li class="nav-item">
+              <button class="nav-link challenge-solves" data-bs-target="#solves" @click="showSolves()">
+                <span class="tab-icon">🎯</span> {{ ngettext("%(num)d Solve", "%(num)d Solves", solves) }}
+              </button>
+            </li>
+            {% endif %}
+          {% endblock %}
+        </ul>
+      </div>
+
+      <div>
+        <div class="tab-content cyber-tab-content">
+          <div role="tabpanel" class="tab-pane fade show active" id="challenge">
+            <h2 class="challenge-name text-center pt-2">
+              {{ challenge.name }}
+            </h2>
+            <h3 class="challenge-value text-center">
+              <span class="value-badge">{{ challenge.value }}</span> <span class="points-text">POINTS</span>
+            </h3>
+
+
+            {% if tags %}
+              <div class="challenge-tags text-center pt-1 pb-2">
+                {% block tags %}
+                  {% for tag in tags %}
+                    <span class="challenge-tag badge cyber-tag">{{ tag }}</span>
+                  {% endfor %}
+                {% endblock %}
+              </div>
+            {% endif %}
+
+            <small class="challenge-attribution text-center text-muted d-block mb-2">
+              {% block attribution %}{{ challenge.byline }}{% endblock %}
+            </small>
+
+            {% if Configs.challenge_ratings == "public" %}
+            <small class="challenge-ratings text-center text-muted d-block mb-2">
+              {% block ratings %}
+                {% if ratings %}
+                  <span class="rating-up"><i class="fa-solid fa-thumbs-up"></i> {{ ratings.up }}</span>
+                  <span class="text-center px-2">
+                    {% if ratings.count %}
+                    ({{ ((ratings.up / (ratings.count)) * 100) | int }}% liked)
+                    {% endif %}
+                  </span>
+                  <span class="rating-down"><i class="fa-solid fa-thumbs-down"></i> {{ ratings.down }}</span>
+                {% endif %}
+              {% endblock %}
+            </small>
+            {% endif %}
+
+            <div class="challenge-desc-wrapper">
+              <span class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</span>
+            </div>
+
+            {% if challenge.connection_info %}
+              <div class="mb-2 connection-info-wrapper">
+                <span class="challenge-connection-info">
+                  {% block connection_info %}
+                    {% set conn = challenge.connection_info %}
+                    {% if not conn %}
+                    {% elif conn.startswith("http") %}
+                      {{ conn | urlize(target="_blank") }}
+                    {% else %}
+                      <code class="cyber-code">{{ conn }}</code>
+                    {% endif %}
+                  {% endblock %}
+                </span>
+              </div>
+            {% endif %}
+
+            {% if hints %}
+              <div class="challenge-hints hint-row row">
+                <div class="col-12 mb-2">
+                {% for hint in hints | sort(attribute="cost") %}
+                  <div x-data="Hint" x-init="id = {{ hint.id }}" class="hint-container">
+                    {% if hint.content %}
+                    <details class="cyber-details">
+                      <summary class="cyber-summary">
+                        <span class="hint-icon">💡</span> {% trans %}View Hint{% endtrans %}{% if hint.title %}: {{ hint.title }}{% endif %}
+                      </summary>
+                      <div class="hint-content">{{ hint.html | safe }}</div>
+                    </details>
+                    {% else %}
+                    <details class="cyber-details" @toggle="showHint(event)">
+                      <summary class="cyber-summary locked">
+                        <span class="hint-icon">🔒</span>
+                        {% if hint.title %}
+                        {{ hint.title }} <span class="hint-cost">({{ hint.cost }} point{{ hint.cost|pluralize }})</span>
+                        {% else %}
+                        Unlock Hint <span class="hint-cost">({{ hint.cost }} point{{ hint.cost|pluralize }})</span>
+                        {% endif %}
+                      </summary>
+                      <div class="hint-content" x-html="html"></div>
+                    </details>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {% if files %}
+              <div class="row challenge-files text-center pb-2">
+                {% for file in files %}
+                  <div class="col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block">
+                    {% set segments = file.split('/') %}
+                    {% set token = file.split('?') | last %}
+                    {% if token %}
+                      {% set filename = segments | last | replace("?" + token, "") %}
+                    {% else %}
+                      {% set filename = segments | last %}
+                    {% endif %}
+                    <a
+                        class="btn cyber-file-btn mb-1 d-inline-block px-2 w-100 text-truncate"
+                        href="{{ file }}"
+                        title="{{ filename }}"
+                    >
+                      <i class="fas fa-download"></i>
+                      <small>{{ filename }}</small>
+                    </a>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <template x-if="max_attempts > 0">
+              <p class="text-center attempts-info">
+                <span class="attempts-label">ATTEMPTS:</span> <span x-text="attempts"></span>/<span x-text="max_attempts"></span>
+              </p>
+            </template>
+
+            <div class="row submit-row">
+              <div class="col-12 col-sm-8">
+                {% block input %}
+                  <input
+                      id="challenge-id" class="challenge-id" type="hidden"
+                      value="{{ challenge.id }}"
+                  >
+                  <input
+                      id="challenge-input" class="challenge-input form-control cyber-input"
+                      type="text" name="submission"
+                      @keyup.enter="submitChallenge()"
+                      placeholder="{% trans %}Enter Flag...{% endtrans %}" x-model="submission"
+                  >
+                {% endblock %}
+              </div>
+
+              <div class="col-12 col-sm-4 mt-2 mt-sm-0 key-submit">
+                {% block submit %}
+                  <button
+                      id="challenge-submit"
+                      class="challenge-submit btn cyber-submit-btn w-100 h-100" type="submit"
+                      @click.debounce.500ms="submitChallenge()"
+                  >
+                    <span class="submit-icon">🚀</span> {% trans %}Submit{% endtrans %}
+                  </button>
+                {% endblock %}
+              </div>
+            </div>
+
+            <div class="row notification-row">
+              <div class="col-12">
+                <template x-if="response">
+                  <div class="alert text-center w-100 mt-2 cyber-alert"
+                      :class="{
+                        'alert-success cyber-success': response.data.status == 'correct',
+                        'alert-info cyber-info': response.data.status == 'already_solved',
+                        'alert-danger cyber-danger': response.data.status == 'incorrect',
+                        'alert-warning cyber-warning': response.data.status == 'paused',
+                      }" role="alert"
+                  >
+                    <strong x-text="response.data.message"></strong>
+                    <div x-show="(response.data.status == 'correct' || response.data.status == 'already_solved')">
+                      <div x-show="getNextId()">
+                        <button @click="nextChallenge()" class="btn cyber-next-btn mt-2">
+                          {% trans %}Next Challenge{% endtrans %} →
+                        </button>
+                      </div>
+
+                      {% if Configs.social_shares %}
+                      <div>
+                        <button x-show="!share_url" @click="getShareUrl()" class="btn btn-sm cyber-share-btn mt-2">
+                          {% trans %}Share{% endtrans %}
+                        </button>
+                        <div class="btn-group mt-2" role="group" x-show="share_url">
+                          <button type="button" class="btn btn-sm cyber-social-btn" @click="copyShareUrl()" data-bs-toggle="tooltip" data-bs-title="Copied!">
+                            <i class="fa-solid fa-copy"></i>
+                          </button>
+                          <a :href="'https://twitter.com/intent/tweet?url=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm cyber-social-btn" target="_blank">
+                            <i class="fa-brands fa-twitter"></i>
+                          </a>
+                          <a :href="'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm cyber-social-btn" target="_blank">
+                            <i class="fa-brands fa-facebook-f"></i>
+                          </a>
+                          <a :href="'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm cyber-social-btn" target="_blank">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                          </a>
+                        </div>
+                      </div>
+                      {% endif %}
+
+                      {% if Configs.challenge_ratings != "disabled" %}
+                      <div class="mt-2">
+                        <hr class="cyber-hr">
+                        <div class="text-center rating-section">
+                          <p class="mb-2 rating-title">{% trans %}Rate this challenge:{% endtrans %}</p>
+                          <div class="rating-buttons mb-2" x-init="selectedRating = ratingValue || 0;">
+                            <button 
+                              class="btn cyber-rating-btn cyber-rating-up me-2" 
+                              :class="{ 'active': selectedRating === 1 }"
+                              @click="selectedRating = 1"
+                            >
+                              <i class="fa-solid fa-thumbs-up"></i>
+                            </button>
+                            <button 
+                              class="btn cyber-rating-btn cyber-rating-down" 
+                              :class="{ 'active': selectedRating === -1 }"
+                              @click="selectedRating = -1"
+                            >
+                              <i class="fa-solid fa-thumbs-down"></i>
+                            </button>
+                          </div>
+                          <div class="mt-2">
+                            <textarea 
+                              class="form-control cyber-textarea" 
+                              rows="2" 
+                              x-model="ratingReview"
+                              placeholder="{% trans %}Write a review (optional){% endtrans %}"
+                              maxlength="2000"
+                            ></textarea>
+                          </div>
+                          <div class="mt-2">
+                            <button 
+                              @click="submitRating()"
+                              class="btn cyber-rating-submit"
+                              :disabled="!selectedRating"
+                            >
+                              {% trans %}Submit Rating{% endtrans %}
+                            </button>
+                          </div>
+                          <div x-show="ratingSubmitted" class="text-success mt-2 rating-thanks">
+                            <small>✨ {% trans %}Thank you for your rating!{% endtrans %}</small>
+                          </div>
+                        </div>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" class="tab-pane fade" id="submissions">
+            <div class="row">
+              <div class="col-md-12">
+                <table class="table table-striped cyber-table align-middle text-center">
+                  <thead>
+                  <tr>
+                    <th>{% trans %}Submission{% endtrans %}</th>
+                    <th>{% trans %}Type{% endtrans %}</th>
+                    <th>{% trans %}Date{% endtrans %}</th>
+                  </tr>
+                  </thead>
+                  <tbody id="challenge-submission-names">
+                  <template x-for="submission in submissions">
+                    <tr>
+                      <td x-data="{ truncate: true }">
+                        <code class="cyber-code" x-text="truncate ? '*'.repeat(submission.provided.length) : submission.provided"></code>
+                        <button class="btn btn-link cyber-eye-btn p-0 pl-1" @click="truncate = !truncate">
+                          <i :class="truncate ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+                        </button>
+                      </td>
+                      <td x-text="submission.type"></td>
+                      <td x-text="submission.date"></td>
+                    </tr>
+                  </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" class="tab-pane fade" id="solves">
+            <div class="row">
+              <div class="col-md-12">
+                <table class="table table-striped cyber-table align-middle text-center">
+                  <thead>
+                  <tr>
+                    <th>{% trans %}Name{% endtrans %}</th>
+                    <th>{% trans %}Date{% endtrans %}</th>
+                  </tr>
+                  </thead>
+                  <tbody id="challenge-solves-names">
+                  <template x-for="solve in solves">
+                    <tr>
+                      <td>
+                        <a :href="solve.account_url" x-text="solve.name" class="cyber-link"></a>
+                      </td>
+                      <td x-text="solve.date"></td>
+                    </tr>
+                  </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" class="tab-pane fade" id="solution">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="challenge-solution-content pt-2 cyber-solution">
+                  <template x-if="solution">
+                    <div x-html="solution" style="white-space: pre-wrap;">
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  :root {
+    --christmas-red: #c41e3a;
+    --christmas-green: #165b33;
+    --christmas-gold: #ffd700;
+    --neon-red: #ff0000;
+    --neon-green: #00ff00;
+    --neon-cyan: #00f5ff;
+    --neon-pink: #ff006e;
+    --glow-red: rgba(255, 0, 0, 0.6);
+    --glow-green: rgba(0, 255, 0, 0.6);
+    --glow-gold: rgba(255, 215, 0, 0.6);
+    --glow-cyan: rgba(0, 245, 255, 0.6);
+  }
+
+  /* Modal Styling - Slim and Elegant */
+  .cyber-modal {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('/themes/cyberai/static/img/santarai.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    border: 2px solid var(--christmas-gold) !important;
+    border-radius: 10px !important;
+    box-shadow: 
+      0 0 20px var(--glow-gold),
+      inset 0 0 20px rgba(255, 215, 0, 0.05) !important;
+    backdrop-filter: blur(10px);
+    position: relative;
+  }
+
+  .cyber-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .cyber-close:hover {
+    opacity: 1;
+    filter: brightness(0) invert(1) drop-shadow(0 0 8px var(--neon-red));
+    transform: rotate(90deg);
+  }
+
+  /* Tabs Styling - Refined */
+  .cyber-tabs {
+    border-bottom: 1px solid var(--christmas-gold) !important;
+    margin-bottom: 15px;
+  }
+
+  .cyber-tabs .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    border: none;
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    background: rgba(0, 0, 0, 0.2);
+    margin-right: 3px;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .cyber-tabs .nav-link:hover {
+    color: var(--neon-green);
+    background: rgba(0, 255, 0, 0.05);
+    text-shadow: 0 0 8px var(--glow-green);
+  }
+
+  .cyber-tabs .nav-link.active {
+    color: var(--christmas-gold);
+    background: rgba(255, 215, 0, 0.1);
+    border-bottom: 2px solid var(--christmas-gold);
+    text-shadow: 0 0 10px var(--glow-gold);
+  }
+
+  .tab-icon {
+    margin-right: 5px;
+    font-size: 1em;
+  }
+
+  /* Challenge Name and Value - Refined */
+  .challenge-name {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 15px var(--glow-cyan);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .challenge-value {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+
+  .value-badge {
+    display: inline-block;
+    padding: 4px 16px;
+    background: linear-gradient(135deg, var(--christmas-red), var(--neon-pink));
+    border: 1px solid var(--christmas-gold);
+    border-radius: 20px;
+    color: white;
+    font-weight: 800;
+    font-size: 1rem;
+    box-shadow: 0 0 15px var(--glow-red);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  }
+
+  .points-text {
+    color: var(--christmas-gold);
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    margin-left: 8px;
+  }
+
+  /* Tags - Slim */
+  .cyber-tag {
+    background: linear-gradient(135deg, var(--christmas-green), var(--neon-green)) !important;
+    color: white !important;
+    padding: 3px 12px;
+    margin: 0 4px;
+    border: 1px solid var(--neon-green);
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px var(--glow-green);
+    letter-spacing: 0.5px;
+  }
+
+  /* Ratings */
+  .rating-up {
+    color: var(--neon-green);
+    text-shadow: 0 0 8px var(--glow-green);
+  }
+
+  .rating-down {
+    color: var(--neon-red);
+    text-shadow: 0 0 8px var(--glow-red);
+  }
+
+  /* Description - Slim Box */
+  .challenge-desc-wrapper {
+    background: rgba(0, 0, 0, 0.4);
+    border-left: 3px solid var(--christmas-gold);
+    padding: 12px 15px;
+    margin: 12px 0;
+    border-radius: 6px;
+    box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.05);
+  }
+
+  .challenge-desc {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  /* Connection Info - Slim */
+  .connection-info-wrapper {
+    text-align: center;
+    padding: 10px;
+    background: rgba(0, 245, 255, 0.08);
+    border: 1px solid var(--neon-cyan);
+    border-radius: 6px;
+    box-shadow: 0 0 12px var(--glow-cyan);
+  }
+
+  .cyber-code {
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--neon-green);
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--neon-green);
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-shadow: 0 0 6px var(--glow-green);
+    letter-spacing: 0.5px;
+  }
+
+  /* Hints - Refined */
+  .hint-container {
+    margin-bottom: 10px;
+  }
+
+  .cyber-details {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--christmas-green);
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 0 10px var(--glow-green);
+  }
+
+  .cyber-summary {
+    padding: 10px 12px;
+    cursor: pointer;
+    color: var(--neon-green);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    list-style: none;
+    letter-spacing: 0.5px;
+  }
+
+  .cyber-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .cyber-summary:hover {
+    background: rgba(0, 255, 0, 0.08);
+    text-shadow: 0 0 8px var(--glow-green);
+  }
+
+  .cyber-summary.locked {
+    color: var(--christmas-gold);
+  }
+
+  .hint-icon {
+    margin-right: 6px;
+    font-size: 1em;
+  }
+
+  .hint-cost {
+    color: var(--christmas-gold);
+    text-shadow: 0 0 8px var(--glow-gold);
+    font-size: 0.85rem;
+  }
+
+  .hint-content {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid var(--christmas-green);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+  }
+
+  /* File Buttons - Slim */
+  .cyber-file-btn {
+    background: linear-gradient(135deg, var(--christmas-red), var(--neon-pink)) !important;
+    color: white !important;
+    border: 1px solid var(--neon-pink);
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 12px var(--glow-red);
+    letter-spacing: 0.5px;
+    border-radius: 6px;
+  }
+
+  .cyber-file-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 18px var(--glow-red);
+    background: linear-gradient(135deg, var(--neon-pink), var(--christmas-red)) !important;
+  }
+
+  /* Attempts Info - Slim */
+  .attempts-info {
+    color: var(--christmas-gold);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin: 10px 0;
+    font-size: 0.95rem;
+  }
+
+  .attempts-label {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px var(--glow-cyan);
+  }
+
+  /* Input and Submit - Refined */
+  .cyber-input {
+    background: rgba(0, 0, 0, 0.7) !important;
+    border: 1px solid var(--neon-green) !important;
+    color: var(--neon-green) !important;
+    padding: 10px 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 12px var(--glow-green);
+    transition: all 0.3s ease;
+    border-radius: 6px;
+  }
+
+  .cyber-input:focus {
+    box-shadow: 0 0 18px var(--glow-green);
+    border-color: var(--christmas-gold) !important;
+    outline: none;
+  }
+
+  .cyber-input::placeholder {
+    color: rgba(0, 255, 0, 0.5);
+  }
+
+  .cyber-submit-btn {
+    background: linear-gradient(135deg, var(--christmas-green), var(--neon-green)) !important;
+    border: 1px solid var(--neon-green) !important;
+    color: white !important;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    font-size: 0.95rem;
+    padding: 10px 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--glow-green);
+    text-transform: uppercase;
+    border-radius: 6px;
+  }
+
+  .cyber-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 22px var(--glow-green);
+    background: linear-gradient(135deg, var(--neon-green), var(--christmas-green)) !important;
+  }
+
+  .submit-icon {
+    margin-right: 6px;
+  }
+
+  /* Alerts - Slim */
+  .cyber-alert {
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 0.95rem;
+  }
+
+  .cyber-success {
+    background: rgba(0, 255, 0, 0.15) !important;
+    border: 1px solid var(--neon-green) !important;
+    color: var(--neon-green) !important;
+    box-shadow: 0 0 18px var(--glow-green);
+  }
+
+  .cyber-danger {
+    background: rgba(255, 0, 0, 0.15) !important;
+    border: 1px solid var(--neon-red) !important;
+    color: var(--neon-red) !important;
+    box-shadow: 0 0 18px var(--glow-red);
+  }
+
+  .cyber-info {
+    background: rgba(0, 245, 255, 0.15) !important;
+    border: 1px solid var(--neon-cyan) !important;
+    color: var(--neon-cyan) !important;
+    box-shadow: 0 0 18px var(--glow-cyan);
+  }
+
+  .cyber-warning {
+    background: rgba(255, 215, 0, 0.15) !important;
+    border: 1px solid var(--christmas-gold) !important;
+    color: var(--christmas-gold) !important;
+    box-shadow: 0 0 18px var(--glow-gold);
+  }
+
+  /* Next Challenge Button - Slim */
+  .cyber-next-btn {
+    background: linear-gradient(135deg, var(--neon-cyan), var(--christmas-green)) !important;
+    border: 1px solid var(--neon-cyan);
+    color: white !important;
+    padding: 8px 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px var(--glow-cyan);
+    transition: all 0.3s ease;
+    border-radius: 6px;
+  }
+
+  .cyber-next-btn:hover {
+    transform: translateX(5px);
+    box-shadow: 0 0 22px var(--glow-cyan);
+  }
+
+  /* Social Buttons - Slim */
+  .cyber-share-btn,
+  .cyber-social-btn {
+    background: rgba(255, 215, 0, 0.15) !important;
+    border: 1px solid var(--christmas-gold) !important;
+    color: var(--christmas-gold) !important;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+  }
+
+  .cyber-share-btn:hover,
+  .cyber-social-btn:hover {
+    background: rgba(255, 215, 0, 0.25) !important;
+    box-shadow: 0 0 12px var(--glow-gold);
+  }
+
+  /* Rating Section - Refined */
+  .cyber-hr {
+    border-color: var(--christmas-gold);
+    opacity: 0.3;
+    margin: 15px 0;
+  }
+
+  .rating-title {
+    color: var(--christmas-gold);
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+
+  .cyber-rating-btn {
+    padding: 8px 18px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid;
+    border-radius: 6px;
+  }
+
+  .cyber-rating-up {
+    background: rgba(0, 255, 0, 0.08);
+    border-color: var(--neon-green) !important;
+    color: var(--neon-green) !important;
+  }
+
+  .cyber-rating-up.active,
+  .cyber-rating-up:hover {
+    background: rgba(0, 255, 0, 0.2);
+    box-shadow: 0 0 15px var(--glow-green);
+  }
+
+  .cyber-rating-down {
+    background: rgba(255, 0, 0, 0.08);
+    border-color: var(--neon-red) !important;
+    color: var(--neon-red) !important;
+  }
+
+  .cyber-rating-down.active,
+  .cyber-rating-down:hover {
+    background: rgba(255, 0, 0, 0.2);
+    box-shadow: 0 0 15px var(--glow-red);
+  }
+
+  .cyber-textarea {
+    background: rgba(0, 0, 0, 0.7) !important;
+    border: 1px solid var(--christmas-gold) !important;
+    color: white !important;
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+  }
+
+  .cyber-textarea:focus {
+    box-shadow: 0 0 12px var(--glow-gold);
+    outline: none;
+  }
+
+  .cyber-rating-submit {
+    background: linear-gradient(135deg, var(--christmas-gold), var(--christmas-red)) !important;
+    border: 1px solid var(--christmas-gold);
+    color: white !important;
+    padding: 8px 24px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px var(--glow-gold);
+    transition: all 0.3s ease;
+    border-radius: 6px;
+  }
+
+  .cyber-rating-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0 22px var(--glow-gold);
+  }
+
+  .cyber-rating-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .rating-thanks {
+    color: var(--neon-green);
+    text-shadow: 0 0 8px var(--glow-green);
+    font-weight: 600;
+  }
+
+  /* Tables - Refined */
+  .cyber-table {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+  }
+
+  .cyber-table thead th {
+    background: rgba(255, 215, 0, 0.15);
+    color: var(--christmas-gold);
+    border-color: var(--christmas-gold);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .cyber-table tbody tr {
+    border-color: rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .cyber-table tbody tr:hover {
+    background: rgba(255, 215, 0, 0.08);
+  }
+
+  .cyber-table tbody td {
+    padding: 10px;
+  }
+
+  .cyber-eye-btn {
+    color: var(--neon-cyan) !important;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .cyber-eye-btn:hover {
+    color: var(--neon-green) !important;
+    text-shadow: 0 0 8px var(--glow-green);
+  }
+
+  .cyber-link {
+    color: var(--neon-cyan);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .cyber-link:hover {
+    color: var(--neon-green);
+    text-shadow: 0 0 8px var(--glow-green);
+  }
+
+  /* Solution Content - Refined */
+  .cyber-solution {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid var(--neon-cyan);
+    box-shadow: 0 0 15px var(--glow-cyan);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .challenge-name {
+      font-size: 1.3rem;
+    }
+
+    .challenge-value {
+      font-size: 1rem;
+    }
+
+    .value-badge {
+      font-size: 0.9rem;
+      padding: 3px 12px;
+    }
+
+    .cyber-tabs .nav-link {
+      padding: 6px 10px;
+      font-size: 0.85rem;
+    }
+
+    .cyber-input,
+    .cyber-submit-btn {
+      font-size: 0.9rem;
+      padding: 9px 10px;
+    }
+  }
+</style>
