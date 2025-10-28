@@ -122,7 +122,7 @@
     </div>
   </div>
 
-  <!-- Original Content (Hidden) -->
+  <!-- Original Content (Hidden by default, shown for custom pages) -->
   <div class="container" id="original-content" style="display: none;">
     {{ content | safe }}
   </div>
@@ -754,262 +754,289 @@
   </style>
 
   <script>
-    // Terminal boot sequence
-    const terminalContent = document.getElementById('terminal-content');
-    const terminalScreen = document.querySelector('.terminal-screen');
-    const terminalBoot = document.getElementById('terminal-boot');
-    const titleScreen = document.getElementById('title-screen');
-    const gameMenu = document.getElementById('game-menu');
+    // ============================================
+    // DETECT CUSTOM PAGES (Rules, Company, etc.)
+    // ============================================
+    const currentPath = window.location.pathname;
+    const isCustomPage = currentPath !== '/' && currentPath !== '';
 
-    // Game menu navigation - initialize immediately
-    const menuItems = document.querySelectorAll('.menu-item');
-    let currentIndex = 0;
-
-    function updateSelection(index) {
-      menuItems.forEach((item, i) => {
-        item.classList.toggle('active', i === index);
-      });
-      currentIndex = index;
-    }
-
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if (gameMenu.style.display === 'flex') {
-        if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          currentIndex = (currentIndex - 1 + menuItems.length) % menuItems.length;
-          updateSelection(currentIndex);
-        } else if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          currentIndex = (currentIndex + 1) % menuItems.length;
-          updateSelection(currentIndex);
-        } else if (e.key === 'Enter') {
-          e.preventDefault();
-          const url = menuItems[currentIndex].dataset.url;
-          if (url) window.location.href = url;
-        }
-      }
-    });
-
-    // Click navigation
-    menuItems.forEach((item, index) => {
-      item.addEventListener('click', () => {
-        const url = item.dataset.url;
-        if (url) window.location.href = url;
-      });
-
-      item.addEventListener('mouseenter', () => {
-        updateSelection(index);
-      });
-    });
-
-    // Check if user wants to skip terminal intro
-    const skipTerminalIntro = localStorage.getItem('skipTerminalIntro') === 'true';
-    
-    if (skipTerminalIntro) {
-      // Skip directly to menu
-      terminalBoot.style.display = 'none';
-      titleScreen.style.display = 'none';
-      gameMenu.style.display = 'flex';
-      document.querySelector('nav').style.display = 'block';
-      document.querySelector('footer').style.display = 'block';
+    if (isCustomPage) {
+      // We're on a custom page like /rules or /company
+      // Hide the terminal/menu and show the actual content
+      document.getElementById('terminal-boot').style.display = 'none';
+      document.getElementById('title-screen').style.display = 'none';
+      document.getElementById('game-menu').style.display = 'none';
+      document.getElementById('original-content').style.display = 'block';
+      
+      // Show navbar and footer
+      const navbar = document.querySelector('nav');
+      const footer = document.querySelector('footer');
+      if (navbar) navbar.style.display = 'block';
+      if (footer) footer.style.display = 'block';
+      
     } else {
-      // Run normal intro sequence
+      // ============================================
+      // HOME PAGE - RUN TERMINAL SEQUENCE
+      // ============================================
+      
+      // Terminal boot sequence
+      const terminalContent = document.getElementById('terminal-content');
+      const terminalScreen = document.querySelector('.terminal-screen');
+      const terminalBoot = document.getElementById('terminal-boot');
+      const titleScreen = document.getElementById('title-screen');
+      const gameMenu = document.getElementById('game-menu');
 
-    // Audio setup
-    const ambientSound = new Audio('/themes/cyberai/static/sounds/ambient.mp3');
-    ambientSound.loop = true;
-    ambientSound.volume = 0.5;
+      // Game menu navigation - initialize immediately
+      const menuItems = document.querySelectorAll('.menu-item');
+      let currentIndex = 0;
 
-    let audioStarted = false;
-    let dialogueComplete = false;
-    
-    // Function to start audio
-    function startAudio() {
-      if (!audioStarted) {
-        ambientSound.play().then(() => {
-          audioStarted = true;
-          console.log('Ambient sound started');
-        }).catch(err => {
-          console.log('Audio autoplay prevented:', err);
+      function updateSelection(index) {
+        menuItems.forEach((item, i) => {
+          item.classList.toggle('active', i === index);
         });
+        currentIndex = index;
       }
-    }
 
-    // Handle ESC key to skip at any time during terminal
-    function handleEscapeKey(e) {
-      if (e.key === 'Escape' && terminalBoot.style.display !== 'none') {
-        e.preventDefault();
-        console.log('ESC pressed - skipping to menu');
-        
-        // Skip directly to menu, keep music playing if started
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (gameMenu.style.display === 'flex') {
+          if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            currentIndex = (currentIndex - 1 + menuItems.length) % menuItems.length;
+            updateSelection(currentIndex);
+          } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            currentIndex = (currentIndex + 1) % menuItems.length;
+            updateSelection(currentIndex);
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const url = menuItems[currentIndex].dataset.url;
+            if (url) window.location.href = url;
+          }
+        }
+      });
+
+      // Click navigation
+      menuItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+          const url = item.dataset.url;
+          if (url) window.location.href = url;
+        });
+
+        item.addEventListener('mouseenter', () => {
+          updateSelection(index);
+        });
+      });
+
+      // Check if user wants to skip terminal intro
+      const skipTerminalIntro = localStorage.getItem('skipTerminalIntro') === 'true';
+      
+      if (skipTerminalIntro) {
+        // Skip directly to menu
         terminalBoot.style.display = 'none';
+        titleScreen.style.display = 'none';
         gameMenu.style.display = 'flex';
         document.querySelector('nav').style.display = 'block';
         document.querySelector('footer').style.display = 'block';
-      }
-    }
+      } else {
+        // Run normal intro sequence
 
-    // Handle space key for sound
-    function handleSoundKey(e) {
-      if (e.key === ' ' || e.code === 'Space') {
-        if (!audioStarted) {
-          e.preventDefault();
-          console.log('Space pressed for sound');
-          startAudio();
-        }
-      }
-    }
+        // Audio setup
+        const ambientSound = new Audio('/themes/cyberai/static/sounds/ambient.mp3');
+        ambientSound.loop = true;
+        ambientSound.volume = 0.5;
 
-    // Add listeners immediately
-    document.addEventListener('keydown', handleEscapeKey);
-    document.addEventListener('keydown', handleSoundKey);
-
-    const conversation = [
-      { text: '[SYSTEM INITIALIZING...]', delay: 500, speaker: 'system' },
-      { text: '[LOADING NEURAL INTERFACE...]', delay: 800, speaker: 'system' },
-      { text: '[SCANNING CONSCIOUSNESS...]', delay: 1000, speaker: 'system' },
-      { text: '', delay: 500 },
-      { text: 'Mrs. Claus: Santa\'s little helper are you here?', delay: 100, speaker: 'mrs-claus' },
-      { text: '', delay: 300 },
-      { text: 'Santa\'s little helper: Yes, Mrs Claus how can I help?', delay: 100, speaker: 'elf' },
-      { text: '', delay: 500 },
-      { text: 'Mrs. Claus: Oh, it\'s just so terrible, Christmas is going to be ruined!', delay: 100, speaker: 'mrs-claus' },
-      { text: '', delay: 300 },
-      { text: 'Santa\'s little helper: Woah there mrs. Claus what\'s going on?', delay: 100, speaker: 'elf' },
-      { text: '', delay: 500 },
-      { text: 'Mrs. Claus: Santa had an accident, I have sent Rudolf and the other reindeer, please help Santa!', delay: 100, speaker: 'mrs-claus' },
-      { text: '', delay: 800 },
-      { text: '[Rudolf and the merry reindeer enters workshop with a hurt Santa]', delay: 800, speaker: 'action' },
-      { text: '', delay: 500 },
-      { text: 'Santa\'s little helper: Oh my goodness, what happened Rudolf?', delay: 100, speaker: 'elf' },
-      { text: '', delay: 300 },
-      { text: 'Rudolf: [Reindeer noises]', delay: 100, speaker: 'rudolf' },
-      { text: '', delay: 500 },
-      { text: 'Santa\'s little helper: WHAT!', delay: 100, speaker: 'elf' },
-      { text: '', delay: 300 },
-      { text: 'Santa\'s little helper: No seriously, what happened I don\'t speak reindeer.', delay: 100, speaker: 'elf' },
-      { text: '', delay: 500 },
-      { text: 'Mrs. Claus: Rudolf said that the Grinch shot down the sleigh. Please help him little elf!', delay: 100, speaker: 'mrs-claus' },
-      { text: '', delay: 800 },
-      { text: 'Santa\'s little helper: The body is too badly damaged, no amounts of milk and cookies are going to solve this.', delay: 100, speaker: 'elf' },
-      { text: '', delay: 500 },
-      { text: 'Mrs. Claus: Oh no!', delay: 100, speaker: 'mrs-claus' },
-      { text: '', delay: 300 },
-      { text: 'Santa\'s little helper: Don\'t worry mrs. Claus I have an idea, we will upload Santa\'s merriness and christmas spirit into the... em....', delay: 100, speaker: 'elf' },
-      { text: '', delay: 800 },
-      { text: '[The little elf started frantically looking around, and after a quick scan set its eyes on a Cyborg Samurai that little Timmy wanted for christmas]', delay: 800, speaker: 'action' },
-      { text: '', delay: 500 },
-      { text: 'Santa\'s little helper: Ah Yes! I have found a more sturdy body to toughen up Santa!', delay: 100, speaker: 'elf' },
-      { text: '', delay: 800 },
-      { text: '[Downloading sequence]:', delay: 500, speaker: 'action' },
-      { text: '[0%..................] ', delay: 200, speaker: 'system' },
-      { text: '[███░░░░░░░░░░░░░░░░] 15%', delay: 300, speaker: 'system' },
-      { text: '[██████░░░░░░░░░░░░░] 30%', delay: 300, speaker: 'system' },
-      { text: '[█████████░░░░░░░░░░] 45%', delay: 300, speaker: 'system' },
-      { text: '[████████████░░░░░░░] 60%', delay: 300, speaker: 'system' },
-      { text: '[███████████████░░░░] 75%', delay: 300, speaker: 'system' },
-      { text: '[██████████████████░] 90%', delay: 300, speaker: 'system' },
-      { text: '[████████████████████] 100%', delay: 500, speaker: 'system' },
-      { text: '', delay: 300 },
-      { text: '[Download complete]', delay: 800, speaker: 'action' },
-      { text: '', delay: 500 },
-      { text: 'Santa\'s little helper: Hello?', delay: 100, speaker: 'elf' },
-      { text: '', delay: 800 },
-      { text: 'Santarai: ...', delay: 100, speaker: 'santarai' },
-      { text: '', delay: 800 },
-      { text: 'Santa\'s little helper: Santa, are you in there?', delay: 100, speaker: 'elf' },
-      { text: '', delay: 800 },
-      { text: 'Santarai: ...', delay: 100, speaker: 'santarai' },
-      { text: '', delay: 800 },
-      { text: 'Santa\'s little helper: Santa, it\'s time to wake up.', delay: 100, speaker: 'elf' },
-      { text: '', delay: 800 },
-      { text: 'Santarai: ...', delay: 100, speaker: 'santarai' },
-      { text: '', delay: 1000 },
-      { text: 'Santa\'s little helper: I said it\'s time to wake up Santarai! It\'s Christmas time!', delay: 100, speaker: 'elf', important: true },
-    ];
-
-    let currentLine = 0;
-
-    function scrollToBottom() {
-      terminalScreen.scrollTop = terminalScreen.scrollHeight;
-    }
-
-    function typeText(text, speed = 40, speaker = null) {
-      return new Promise((resolve) => {
-        const line = document.createElement('div');
-        line.className = 'terminal-line';
-        if (speaker) {
-          line.classList.add(`speaker-${speaker}`);
-        }
-        terminalContent.appendChild(line);
+        let audioStarted = false;
+        let dialogueComplete = false;
         
-        scrollToBottom();
-
-        let i = 0;
-        const interval = setInterval(() => {
-          if (i < text.length) {
-            line.textContent += text.charAt(i);
-            i++;
-            scrollToBottom();
-          } else {
-            clearInterval(interval);
-            scrollToBottom();
-            resolve();
+        // Function to start audio
+        function startAudio() {
+          if (!audioStarted) {
+            ambientSound.play().then(() => {
+              audioStarted = true;
+              console.log('Ambient sound started');
+            }).catch(err => {
+              console.log('Audio autoplay prevented:', err);
+            });
           }
-        }, speed);
-      });
-    }
-
-    async function runConversation() {
-      for (const entry of conversation) {
-        if (entry.important) {
-          await typeText(entry.text, 25, entry.speaker);
-          const lastLine = terminalContent.lastChild;
-          lastLine.style.fontSize = '22px';
-          lastLine.style.fontWeight = 'bold';
-          scrollToBottom();
-        } else {
-          await typeText(entry.text, 40, entry.speaker);
         }
-        
-        scrollToBottom();
-        await new Promise(resolve => setTimeout(resolve, entry.delay));
-      }
 
-      dialogueComplete = true;
-      
-      // Auto-redirect to title screen after 2 seconds
-      setTimeout(() => {
-        // Show title screen
-        terminalBoot.style.display = 'none';
-        titleScreen.style.display = 'flex';
-        
-        // After 1.5 seconds, show subtitle and transform colors
-        setTimeout(() => {
-          const subtitle = document.getElementById('christmas-subtitle');
-          const gameTitle = document.querySelector('.game-title');
-          const glitchTitle = document.querySelector('.glitch');
+        // Handle ESC key to skip at any time during terminal
+        function handleEscapeKey(e) {
+          if (e.key === 'Escape' && terminalBoot.style.display !== 'none') {
+            e.preventDefault();
+            console.log('ESC pressed - skipping to menu');
+            
+            // Skip directly to menu, keep music playing if started
+            terminalBoot.style.display = 'none';
+            gameMenu.style.display = 'flex';
+            document.querySelector('nav').style.display = 'block';
+            document.querySelector('footer').style.display = 'block';
+          }
+        }
+
+        // Handle space key for sound
+        function handleSoundKey(e) {
+          if (e.key === ' ' || e.code === 'Space') {
+            if (!audioStarted) {
+              e.preventDefault();
+              console.log('Space pressed for sound');
+              startAudio();
+            }
+          }
+        }
+
+        // Add listeners immediately
+        document.addEventListener('keydown', handleEscapeKey);
+        document.addEventListener('keydown', handleSoundKey);
+
+        const conversation = [
+          { text: '[SYSTEM INITIALIZING...]', delay: 500, speaker: 'system' },
+          { text: '[LOADING NEURAL INTERFACE...]', delay: 800, speaker: 'system' },
+          { text: '[SCANNING CONSCIOUSNESS...]', delay: 1000, speaker: 'system' },
+          { text: '', delay: 500 },
+          { text: 'Mrs. Claus: Santa\'s little helper are you here?', delay: 100, speaker: 'mrs-claus' },
+          { text: '', delay: 300 },
+          { text: 'Santa\'s little helper: Yes, Mrs Claus how can I help?', delay: 100, speaker: 'elf' },
+          { text: '', delay: 500 },
+          { text: 'Mrs. Claus: Oh, it\'s just so terrible, Christmas is going to be ruined!', delay: 100, speaker: 'mrs-claus' },
+          { text: '', delay: 300 },
+          { text: 'Santa\'s little helper: Woah there mrs. Claus what\'s going on?', delay: 100, speaker: 'elf' },
+          { text: '', delay: 500 },
+          { text: 'Mrs. Claus: Santa had an accident, I have sent Rudolf and the other reindeer, please help Santa!', delay: 100, speaker: 'mrs-claus' },
+          { text: '', delay: 800 },
+          { text: '[Rudolf and the merry reindeer enters workshop with a hurt Santa]', delay: 800, speaker: 'action' },
+          { text: '', delay: 500 },
+          { text: 'Santa\'s little helper: Oh my goodness, what happened Rudolf?', delay: 100, speaker: 'elf' },
+          { text: '', delay: 300 },
+          { text: 'Rudolf: [Reindeer noises]', delay: 100, speaker: 'rudolf' },
+          { text: '', delay: 500 },
+          { text: 'Santa\'s little helper: WHAT!', delay: 100, speaker: 'elf' },
+          { text: '', delay: 300 },
+          { text: 'Santa\'s little helper: No seriously, what happened I don\'t speak reindeer.', delay: 100, speaker: 'elf' },
+          { text: '', delay: 500 },
+          { text: 'Mrs. Claus: Rudolf said that the Grinch shot down the sleigh. Please help him little elf!', delay: 100, speaker: 'mrs-claus' },
+          { text: '', delay: 800 },
+          { text: 'Santa\'s little helper: The body is too badly damaged, no amounts of milk and cookies are going to solve this.', delay: 100, speaker: 'elf' },
+          { text: '', delay: 500 },
+          { text: 'Mrs. Claus: Oh no!', delay: 100, speaker: 'mrs-claus' },
+          { text: '', delay: 300 },
+          { text: 'Santa\'s little helper: Don\'t worry mrs. Claus I have an idea, we will upload Santa\'s merriness and christmas spirit into the... em....', delay: 100, speaker: 'elf' },
+          { text: '', delay: 800 },
+          { text: '[The little elf started frantically looking around, and after a quick scan set its eyes on a Cyborg Samurai that little Timmy wanted for christmas]', delay: 800, speaker: 'action' },
+          { text: '', delay: 500 },
+          { text: 'Santa\'s little helper: Ah Yes! I have found a more sturdy body to toughen up Santa!', delay: 100, speaker: 'elf' },
+          { text: '', delay: 800 },
+          { text: '[Downloading sequence]:', delay: 500, speaker: 'action' },
+          { text: '[0%..................] ', delay: 200, speaker: 'system' },
+          { text: '[███░░░░░░░░░░░░░░░░] 15%', delay: 300, speaker: 'system' },
+          { text: '[██████░░░░░░░░░░░░░] 30%', delay: 300, speaker: 'system' },
+          { text: '[█████████░░░░░░░░░░] 45%', delay: 300, speaker: 'system' },
+          { text: '[████████████░░░░░░░] 60%', delay: 300, speaker: 'system' },
+          { text: '[███████████████░░░░] 75%', delay: 300, speaker: 'system' },
+          { text: '[██████████████████░] 90%', delay: 300, speaker: 'system' },
+          { text: '[████████████████████] 100%', delay: 500, speaker: 'system' },
+          { text: '', delay: 300 },
+          { text: '[Download complete]', delay: 800, speaker: 'action' },
+          { text: '', delay: 500 },
+          { text: 'Santa\'s little helper: Hello?', delay: 100, speaker: 'elf' },
+          { text: '', delay: 800 },
+          { text: 'Santarai: ...', delay: 100, speaker: 'santarai' },
+          { text: '', delay: 800 },
+          { text: 'Santa\'s little helper: Santa, are you in there?', delay: 100, speaker: 'elf' },
+          { text: '', delay: 800 },
+          { text: 'Santarai: ...', delay: 100, speaker: 'santarai' },
+          { text: '', delay: 800 },
+          { text: 'Santa\'s little helper: Santa, it\'s time to wake up.', delay: 100, speaker: 'elf' },
+          { text: '', delay: 800 },
+          { text: 'Santarai: ...', delay: 100, speaker: 'santarai' },
+          { text: '', delay: 1000 },
+          { text: 'Santa\'s little helper: I said it\'s time to wake up Santarai! It\'s Christmas time!', delay: 100, speaker: 'elf', important: true },
+        ];
+
+        let currentLine = 0;
+
+        function scrollToBottom() {
+          terminalScreen.scrollTop = terminalScreen.scrollHeight;
+        }
+
+        function typeText(text, speed = 40, speaker = null) {
+          return new Promise((resolve) => {
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            if (speaker) {
+              line.classList.add(`speaker-${speaker}`);
+            }
+            terminalContent.appendChild(line);
+            
+            scrollToBottom();
+
+            let i = 0;
+            const interval = setInterval(() => {
+              if (i < text.length) {
+                line.textContent += text.charAt(i);
+                i++;
+                scrollToBottom();
+              } else {
+                clearInterval(interval);
+                scrollToBottom();
+                resolve();
+              }
+            }, speed);
+          });
+        }
+
+        async function runConversation() {
+          for (const entry of conversation) {
+            if (entry.important) {
+              await typeText(entry.text, 25, entry.speaker);
+              const lastLine = terminalContent.lastChild;
+              lastLine.style.fontSize = '22px';
+              lastLine.style.fontWeight = 'bold';
+              scrollToBottom();
+            } else {
+              await typeText(entry.text, 40, entry.speaker);
+            }
+            
+            scrollToBottom();
+            await new Promise(resolve => setTimeout(resolve, entry.delay));
+          }
+
+          dialogueComplete = true;
           
-          subtitle.style.opacity = '1';
-          gameTitle.classList.add('christmas-mode');
-          glitchTitle.classList.add('christmas-mode');
-        }, 1500);
-        
-        // After 4 seconds total, show game menu
-        setTimeout(() => {
-          titleScreen.style.display = 'none';
-          gameMenu.style.display = 'flex';
-          document.querySelector('nav').style.display = 'block';
-          document.querySelector('footer').style.display = 'block';
-        }, 4000);
-      }, 2000);
-    }
+          // Auto-redirect to title screen after 2 seconds
+          setTimeout(() => {
+            // Show title screen
+            terminalBoot.style.display = 'none';
+            titleScreen.style.display = 'flex';
+            
+            // After 1.5 seconds, show subtitle and transform colors
+            setTimeout(() => {
+              const subtitle = document.getElementById('christmas-subtitle');
+              const gameTitle = document.querySelector('.game-title');
+              const glitchTitle = document.querySelector('.glitch');
+              
+              subtitle.style.opacity = '1';
+              gameTitle.classList.add('christmas-mode');
+              glitchTitle.classList.add('christmas-mode');
+            }, 1500);
+            
+            // After 4 seconds total, show game menu
+            setTimeout(() => {
+              titleScreen.style.display = 'none';
+              gameMenu.style.display = 'flex';
+              document.querySelector('nav').style.display = 'block';
+              document.querySelector('footer').style.display = 'block';
+            }, 4000);
+          }, 2000);
+        }
 
-    // Start the sequence
-    runConversation();
-    
-    } // End of else block - skip intro check
+        // Start the sequence
+        runConversation();
+        
+      } // End of else block - skip intro check
+      
+    } // End of isCustomPage check
   </script>
 {% endblock %}
 

@@ -1,0 +1,533 @@
+<style>
+  /* Full Page Background Image */
+  body {
+    background: url('/themes/cyberai/static/img/companybp.png') center center fixed !important;
+    background-size: cover !important;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), rgba(196, 30, 58, 0.1), rgba(0, 0, 0, 0.85));
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Company Page Specific Styles */
+  .company-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 20px;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Title and Subtitle */
+  .company-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 80px 20px 40px 20px;
+  }
+
+  .company-logo-text {
+    color: var(--neon-red);
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 8px;
+    text-shadow: 
+      0 0 20px var(--glow-red),
+      0 0 40px var(--glow-red),
+      0 0 60px var(--glow-red);
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    animation: titleGlow 2s ease-in-out infinite;
+    margin-bottom: 15px;
+    font-size: 2.5rem;
+  }
+
+  .company-logo-text::before {
+    content: '🏢 ';
+    filter: drop-shadow(0 0 15px var(--glow-gold));
+  }
+
+  .company-logo-text::after {
+    content: ' 🏢';
+    filter: drop-shadow(0 0 15px var(--glow-gold));
+  }
+
+  @keyframes titleGlow {
+    0%, 100% {
+      text-shadow: 
+        0 0 20px var(--glow-red),
+        0 0 40px var(--glow-red),
+        0 0 60px var(--glow-red);
+    }
+    50% {
+      text-shadow: 
+        0 0 30px var(--glow-red),
+        0 0 60px var(--glow-red),
+        0 0 90px var(--glow-red);
+    }
+  }
+
+  .company-tagline {
+    font-size: 1.5rem;
+    color: var(--christmas-gold);
+    text-shadow: 0 0 20px var(--glow-gold);
+    letter-spacing: 4px;
+    font-family: 'Courier New', monospace;
+    margin: 0;
+  }
+
+  .company-section {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 10px;
+    padding: 35px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 20px var(--glow-gold);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .company-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .company-section:hover {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 30px var(--glow-green);
+    transform: translateY(-3px);
+  }
+
+  .company-section:hover::before {
+    opacity: 1;
+  }
+
+  .company-section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--neon-red);
+    text-shadow: 0 0 15px var(--glow-red);
+    margin-bottom: 25px;
+    letter-spacing: 3px;
+    border-bottom: 2px solid var(--christmas-gold);
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .company-section-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+
+  .company-text {
+    color: var(--christmas-white);
+    font-size: 1.15rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .company-text:last-child {
+    margin-bottom: 0;
+  }
+
+  .company-highlight {
+    color: var(--neon-green);
+    font-weight: 600;
+    text-shadow: 0 0 8px var(--glow-green);
+  }
+
+  .company-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 25px;
+  }
+
+  .company-feature-card {
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(0, 255, 0, 0.3);
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+  }
+
+  .company-feature-card:hover {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 25px var(--glow-green);
+    transform: translateY(-5px);
+    background: rgba(0, 255, 0, 0.1);
+  }
+
+  .company-feature-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 10px var(--glow-green));
+  }
+
+  .company-feature-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    text-shadow: 0 0 10px var(--glow-green);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+  }
+
+  .company-feature-text {
+    color: var(--christmas-white);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .company-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 25px;
+  }
+
+  .company-stat-card {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
+    border: 2px solid var(--neon-red);
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 0 20px var(--glow-red);
+    transition: all 0.3s ease;
+  }
+
+  .company-stat-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px var(--glow-red);
+  }
+
+  .company-stat-number {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--neon-red);
+    text-shadow: 0 0 20px var(--glow-red);
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+  }
+
+  .company-stat-label {
+    font-size: 1rem;
+    color: var(--christmas-gold);
+    text-shadow: 0 0 10px var(--glow-gold);
+    margin-top: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .company-cta {
+    background: rgba(0, 0, 0, 0.8);
+    border: 3px solid var(--christmas-gold);
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 0 40px var(--glow-gold);
+    margin-top: 40px;
+  }
+
+  .company-cta-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--neon-green);
+    text-shadow: 0 0 20px var(--glow-green);
+    margin-bottom: 20px;
+    letter-spacing: 4px;
+  }
+
+  .company-cta-text {
+    font-size: 1.2rem;
+    color: var(--christmas-white);
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+
+  .company-links {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+  }
+
+  .company-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    background: rgba(0, 255, 0, 0.1);
+    border: 2px solid var(--neon-green);
+    border-radius: 8px;
+    color: var(--neon-green);
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--glow-green);
+    font-family: 'Courier New', monospace;
+  }
+
+  .company-link:hover {
+    background: rgba(0, 255, 0, 0.2);
+    color: var(--christmas-gold);
+    border-color: var(--christmas-gold);
+    box-shadow: 0 0 30px var(--glow-gold);
+    transform: translateY(-3px);
+    text-decoration: none;
+  }
+
+  .company-link-icon {
+    font-size: 1.5rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .company-logo-text {
+      font-size: 2rem;
+      letter-spacing: 4px;
+    }
+
+    .company-tagline {
+      font-size: 1rem;
+      letter-spacing: 2px;
+    }
+
+    .company-header {
+      padding: 40px 20px 20px 20px;
+    }
+
+    .company-section-title {
+      font-size: 1.5rem;
+    }
+
+    .company-text {
+      font-size: 1rem;
+    }
+
+    .company-features {
+      grid-template-columns: 1fr;
+    }
+
+    .company-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .company-cta-title {
+      font-size: 1.8rem;
+    }
+
+    .company-links {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .company-link {
+      justify-content: center;
+    }
+  }
+</style>
+
+<div class="company-container">
+  
+  <!-- ============================================ -->
+  <!-- HEADER SECTION -->
+  <!-- Modify company name and tagline here -->
+  <!-- Background is now full page -->
+  <!-- ============================================ -->
+  <div class="company-header">
+    <h1 class="company-logo-text">OUTPOST24</h1>
+    <p class="company-tagline">Securing the Digital Frontier</p>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ABOUT SECTION -->
+  <!-- Modify company description here -->
+  <!-- ============================================ -->
+  <div class="company-section">
+    <h2 class="company-section-title">
+      <span class="company-section-icon">🏢</span>
+      About Outpost24
+    </h2>
+    <p class="company-text">
+      <span class="company-highlight">Outpost24</span> is a leading cybersecurity company that helps organizations continuously manage their cyber risk through integrated solutions. We provide a comprehensive platform for external attack surface management, web application security, and threat intelligence.
+    </p>
+    <p class="company-text">
+      With over 20 years of experience in the cybersecurity industry, we protect some of the world's largest organizations by identifying and prioritizing vulnerabilities before attackers can exploit them. Our mission is to make the digital world more secure, one vulnerability at a time.
+    </p>
+    <p class="company-text">
+      We believe in <span class="company-highlight">practical security</span> - giving our customers actionable insights that help them reduce risk and improve their security posture efficiently. Our solutions are trusted by thousands of organizations worldwide.
+    </p>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- WHAT WE DO SECTION -->
+  <!-- Add/modify services and features here -->
+  <!-- ============================================ -->
+  <div class="company-section">
+    <h2 class="company-section-title">
+      <span class="company-section-icon">⚔️</span>
+      What We Do
+    </h2>
+    <p class="company-text">
+      Outpost24 provides comprehensive cybersecurity solutions that protect organizations from external and internal threats. Our integrated platform delivers continuous security validation across your entire attack surface.
+    </p>
+    <div class="company-features">
+      <!-- ADD/MODIFY FEATURE CARDS BELOW -->
+      <div class="company-feature-card">
+        <div class="company-feature-icon">🛡️</div>
+        <div class="company-feature-title">Attack Surface Management</div>
+        <div class="company-feature-text">
+          Continuously discover and monitor your external assets to identify security risks.
+        </div>
+      </div>
+
+      <div class="company-feature-card">
+        <div class="company-feature-icon">🔍</div>
+        <div class="company-feature-title">Vulnerability Assessment</div>
+        <div class="company-feature-text">
+          Identify, prioritize, and remediate vulnerabilities across your infrastructure.
+        </div>
+      </div>
+
+      <div class="company-feature-card">
+        <div class="company-feature-icon">🌐</div>
+        <div class="company-feature-title">Web Application Security</div>
+        <div class="company-feature-text">
+          Protect your web applications with continuous security testing and monitoring.
+        </div>
+      </div>
+
+      <div class="company-feature-card">
+        <div class="company-feature-icon">🎯</div>
+        <div class="company-feature-title">Threat Intelligence</div>
+        <div class="company-feature-text">
+          Stay ahead of emerging threats with real-time intelligence and insights.
+        </div>
+      </div>
+      <!-- ADD/MODIFY FEATURE CARDS ABOVE -->
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- WHY WE HOST CTFs SECTION -->
+  <!-- Modify the reasoning and mission here -->
+  <!-- ============================================ -->
+  <div class="company-section">
+    <h2 class="company-section-title">
+      <span class="company-section-icon">🎄</span>
+      Why We Host CTFs
+    </h2>
+    <p class="company-text">
+      At Outpost24, we're passionate about <span class="company-highlight">developing the next generation of cybersecurity professionals</span>. Capture The Flag competitions are an excellent way to learn practical security skills in a fun, engaging environment.
+    </p>
+    <p class="company-text">
+      By hosting this Christmas-themed CTF, we aim to:
+    </p>
+    <p class="company-text" style="padding-left: 30px;">
+      🎁 Foster a community of security enthusiasts and professionals<br>
+      🎁 Provide hands-on learning experiences with real-world scenarios<br>
+      🎁 Discover and nurture talented individuals in the security field<br>
+      🎁 Give back to the cybersecurity community<br>
+      🎁 Spread Christmas cheer while building security skills!
+    </p>
+    <p class="company-text">
+      We believe that <span class="company-highlight">practical experience</span> is the best teacher, and CTFs provide an ideal environment for participants to test their skills, learn new techniques, and have fun while doing it.
+    </p>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- STATISTICS SECTION (Optional) -->
+  <!-- Add/modify company statistics here -->
+  <!-- ============================================ -->
+  <div class="company-section">
+    <h2 class="company-section-title">
+      <span class="company-section-icon">📊</span>
+      Outpost24 By The Numbers
+    </h2>
+    <div class="company-stats">
+      <!-- ADD/MODIFY STAT CARDS BELOW -->
+      <div class="company-stat-card">
+        <div class="company-stat-number">20+</div>
+        <div class="company-stat-label">Years in Cybersecurity</div>
+      </div>
+
+      <div class="company-stat-card">
+        <div class="company-stat-number">2000+</div>
+        <div class="company-stat-label">Global Customers</div>
+      </div>
+
+      <div class="company-stat-card">
+        <div class="company-stat-number">40+</div>
+        <div class="company-stat-label">Countries Served</div>
+      </div>
+
+      <div class="company-stat-card">
+        <div class="company-stat-number">24/7</div>
+        <div class="company-stat-label">Security Monitoring</div>
+      </div>
+      <!-- ADD/MODIFY STAT CARDS ABOVE -->
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- CALL TO ACTION SECTION -->
+  <!-- Modify links and contact information here -->
+  <!-- ============================================ -->
+  <div class="company-cta">
+    <h2 class="company-cta-title">Join Our Mission</h2>
+    <p class="company-cta-text">
+      Want to learn more about Outpost24 or explore career opportunities?<br>
+      Connect with us and become part of the team securing the digital world!
+    </p>
+    <div class="company-links">
+      <!-- ADD/MODIFY LINKS BELOW -->
+      <a href="https://outpost24.com" target="_blank" class="company-link">
+        <span class="company-link-icon">🌐</span>
+        <span>Visit Website</span>
+      </a>
+      
+      <a href="https://www.linkedin.com/company/outpost24" target="_blank" class="company-link">
+        <span class="company-link-icon">💼</span>
+        <span>LinkedIn</span>
+      </a>
+      
+      <a href="https://outpost24.com/careers" target="_blank" class="company-link">
+        <span class="company-link-icon">🎯</span>
+        <span>Careers</span>
+      </a>
+      
+      <a href="https://twitter.com/outpost24" target="_blank" class="company-link">
+        <span class="company-link-icon">🐦</span>
+        <span>Twitter/X</span>
+      </a>
+      <!-- ADD/MODIFY LINKS ABOVE -->
+    </div>
+  </div>
+
+</div>

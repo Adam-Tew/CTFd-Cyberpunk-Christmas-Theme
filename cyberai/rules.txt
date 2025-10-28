@@ -1,0 +1,372 @@
+<style>
+  /* Full Page Background Image */
+  body {
+    background: url('/themes/cyberai/static/img/rules.png') center center fixed !important;
+    background-size: cover !important;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), rgba(255, 0, 0, 0.1), rgba(0, 0, 0, 0.85));
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Rules Page Specific Styles */
+  .rules-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Title and Subtitle */
+  .rules-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 80px 20px 40px 20px;
+  }
+
+  .rules-title {
+    color: var(--neon-red);
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 8px;
+    text-shadow: 
+      0 0 20px var(--glow-red),
+      0 0 40px var(--glow-red),
+      0 0 60px var(--glow-red);
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    animation: titleGlow 2s ease-in-out infinite;
+    margin-bottom: 15px;
+    font-size: 2.5rem;
+  }
+
+  .rules-title::before {
+    content: '⚔️ ';
+    filter: drop-shadow(0 0 15px var(--glow-red));
+  }
+
+  .rules-title::after {
+    content: ' ⚔️';
+    filter: drop-shadow(0 0 15px var(--glow-red));
+  }
+
+  @keyframes titleGlow {
+    0%, 100% {
+      text-shadow: 
+        0 0 20px var(--glow-red),
+        0 0 40px var(--glow-red),
+        0 0 60px var(--glow-red);
+    }
+    50% {
+      text-shadow: 
+        0 0 30px var(--glow-red),
+        0 0 60px var(--glow-red),
+        0 0 90px var(--glow-red);
+    }
+  }
+
+  .rules-subtitle {
+    font-size: 1.5rem;
+    color: var(--christmas-gold);
+    text-shadow: 0 0 20px var(--glow-gold);
+    letter-spacing: 4px;
+    font-family: 'Courier New', monospace;
+    margin: 0;
+  }
+
+  .rules-section {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 20px var(--glow-gold);
+    transition: all 0.3s ease;
+  }
+
+  .rules-section:hover {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 30px var(--glow-green);
+    transform: translateY(-2px);
+  }
+
+  .rules-section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--neon-red);
+    text-shadow: 0 0 15px var(--glow-red);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    border-bottom: 2px solid var(--christmas-gold);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .rules-section-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+
+  .rules-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .rules-list li {
+    padding: 15px 0;
+    padding-left: 40px;
+    color: var(--christmas-white);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .rules-list li:last-child {
+    border-bottom: none;
+  }
+
+  .rules-list li:hover {
+    color: var(--neon-green);
+    text-shadow: 0 0 10px var(--glow-green);
+    padding-left: 45px;
+  }
+
+  .rules-list li::before {
+    content: '🎄';
+    position: absolute;
+    left: 0;
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 10px var(--glow-green));
+    transition: all 0.3s ease;
+  }
+
+  .rules-list li:hover::before {
+    transform: scale(1.2) rotate(10deg);
+  }
+
+  .rules-important {
+    background: rgba(255, 0, 0, 0.15);
+    border-left: 4px solid var(--neon-red);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 5px;
+    box-shadow: 0 0 15px var(--glow-red);
+  }
+
+  .rules-important-title {
+    color: var(--neon-red);
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px var(--glow-red);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .rules-important p {
+    color: var(--christmas-white);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .rules-footer {
+    text-align: center;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid var(--neon-green);
+    border-radius: 10px;
+    margin-top: 30px;
+    box-shadow: 0 0 20px var(--glow-green);
+  }
+
+  .rules-footer-text {
+    color: var(--christmas-gold);
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--glow-gold);
+    margin: 0;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .rules-title {
+      font-size: 2rem;
+      letter-spacing: 4px;
+    }
+
+    .rules-subtitle {
+      font-size: 1rem;
+      letter-spacing: 2px;
+    }
+
+    .rules-header {
+      padding: 40px 20px 20px 20px;
+    }
+
+    .rules-section-title {
+      font-size: 1.4rem;
+    }
+
+    .rules-list li {
+      font-size: 1rem;
+      padding-left: 35px;
+    }
+
+    .rules-container {
+      margin: 30px auto;
+      padding: 15px;
+    }
+  }
+</style>
+
+<div class="rules-container">
+  
+  <!-- ============================================ -->
+  <!-- HEADER SECTION -->
+  <!-- Modify the title and subtitle here -->
+  <!-- Background is now full page -->
+  <!-- ============================================ -->
+  <div class="rules-header">
+    <h1 class="rules-title">Competition Rules</h1>
+    <p class="rules-subtitle">Santarai's Code of Honor</p>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- GENERAL RULES SECTION -->
+  <!-- Add/modify general competition rules here -->
+  <!-- ============================================ -->
+  <div class="rules-section">
+    <h2 class="rules-section-title">
+      <span class="rules-section-icon">⚔</span>
+      General Rules
+    </h2>
+    <ul class="rules-list">
+      <!-- ADD NEW GENERAL RULES BELOW THIS LINE -->
+      <li>This is a Capture The Flag (CTF) competition. Solve challenges to earn points and climb the leaderboard.</li>
+      <li>All participants must register with a valid email address before competing.</li>
+      <li>Teams and individual participation are both allowed (check competition mode for details).</li>
+      <li>The competition runs from [START DATE] to [END DATE]. Submissions outside this window will not be counted.</li>
+      <li>Flag format: <code style="color: var(--neon-green);">FLAG{...}</code> unless otherwise specified in the challenge.</li>
+      <li>Each challenge can only be solved once per team/individual.</li>
+      <!-- ADD NEW GENERAL RULES ABOVE THIS LINE -->
+    </ul>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- PROHIBITED ACTIONS SECTION -->
+  <!-- Add/modify rules about what's NOT allowed -->
+  <!-- ============================================ -->
+  <div class="rules-section">
+    <h2 class="rules-section-title">
+      <span class="rules-section-icon">🚫</span>
+      Prohibited Actions
+    </h2>
+    <ul class="rules-list">
+      <!-- ADD NEW PROHIBITED ACTIONS BELOW THIS LINE -->
+      <li>No Denial of Service (DoS/DDoS) attacks against the competition infrastructure or challenge servers.</li>
+      <li>No brute-forcing of flags or competition credentials.</li>
+      <li>No sharing of flags or solutions with other teams/individuals during the competition.</li>
+      <li>No attacking other participants' systems or infrastructure.</li>
+      <li>No automated scanning or excessive requests that could impact server performance.</li>
+      <li>No exploitation of vulnerabilities in the CTF platform itself (report them to organizers instead).</li>
+      <!-- ADD NEW PROHIBITED ACTIONS ABOVE THIS LINE -->
+    </ul>
+
+    <!-- Important Warning Box -->
+    <div class="rules-important">
+      <div class="rules-important-title">
+        <span>⚠️</span>
+        Important Warning
+      </div>
+      <!-- MODIFY WARNING TEXT BELOW -->
+      <p>Violation of any prohibited actions will result in immediate disqualification and potential ban from future competitions. Play fair and have fun!</p>
+      <!-- MODIFY WARNING TEXT ABOVE -->
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SCORING & RANKING SECTION -->
+  <!-- Add/modify rules about points and rankings -->
+  <!-- ============================================ -->
+  <div class="rules-section">
+    <h2 class="rules-section-title">
+      <span class="rules-section-icon">🏆</span>
+      Scoring & Ranking
+    </h2>
+    <ul class="rules-list">
+      <!-- ADD NEW SCORING RULES BELOW THIS LINE -->
+      <li>Each challenge has a point value based on difficulty. Points are awarded upon successful flag submission.</li>
+      <li>Dynamic scoring may be enabled - challenge points decrease as more teams solve them.</li>
+      <li>In case of ties, the team/individual who reached the score first will rank higher.</li>
+      <li>The leaderboard updates in real-time throughout the competition.</li>
+      <li>First blood bonuses may be awarded for being the first to solve specific challenges.</li>
+      <!-- ADD NEW SCORING RULES ABOVE THIS LINE -->
+    </ul>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TECHNICAL GUIDELINES SECTION -->
+  <!-- Add/modify technical rules and guidelines -->
+  <!-- ============================================ -->
+  <div class="rules-section">
+    <h2 class="rules-section-title">
+      <span class="rules-section-icon">💻</span>
+      Technical Guidelines
+    </h2>
+    <ul class="rules-list">
+      <!-- ADD NEW TECHNICAL GUIDELINES BELOW THIS LINE -->
+      <li>Use any tools and techniques you want to solve challenges (as long as they don't violate prohibited actions).</li>
+      <li>You may use publicly available exploits, scripts, and tools.</li>
+      <li>Collaboration within your team is encouraged; collaboration between teams is not.</li>
+      <li>If you find a bug or issue with a challenge, please report it to the organizers via [CONTACT METHOD].</li>
+      <li>VPN usage is allowed for connection security purposes.</li>
+      <li>Keep your credentials secure. You are responsible for all actions from your account.</li>
+      <!-- ADD NEW TECHNICAL GUIDELINES ABOVE THIS LINE -->
+    </ul>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SUPPORT & CONTACT SECTION -->
+  <!-- Add/modify support and contact information -->
+  <!-- ============================================ -->
+  <div class="rules-section">
+    <h2 class="rules-section-title">
+      <span class="rules-section-icon">🎅</span>
+      Support & Contact
+    </h2>
+    <ul class="rules-list">
+      <!-- ADD NEW SUPPORT INFO BELOW THIS LINE -->
+      <li>For technical issues with the platform, contact us at: <a href="mailto:support@example.com" style="color: var(--neon-green);">support@example.com</a></li>
+      <li>For challenge hints or clarifications, use the designated Discord/Slack channel (if available).</li>
+      <li>Official announcements will be posted on the homepage and via email notifications.</li>
+      <li>Response time for support requests: within 1-2 hours during competition hours.</li>
+      <!-- ADD NEW SUPPORT INFO ABOVE THIS LINE -->
+    </ul>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- FOOTER SECTION -->
+  <!-- Modify the closing message here -->
+  <!-- ============================================ -->
+  <div class="rules-footer">
+    <p class="rules-footer-text">
+      🎄 Good luck, Santarai! May the Christmas spirit guide your cyber journey! ⚔️
+    </p>
+  </div>
+
+</div>
